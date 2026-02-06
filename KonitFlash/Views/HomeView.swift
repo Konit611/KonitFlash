@@ -5,38 +5,49 @@ struct HomeView: View {
 
     private let sampleDecks: [DeckData] = [
         DeckData(name: "English Vocabulary", description: "Essential Words for daily conservation", progress: 0.6, totalCards: 126, dueCards: 17, estimatedMinutes: 5, progressColor: Color.streakPink),
-        DeckData(name: "English Vocabulary", description: "Essential Words for daily conservation", progress: 0.6, totalCards: 126, dueCards: 17, estimatedMinutes: 5, progressColor: Color.learnedGreen),
+        DeckData(name: "English Vocabulary", description: "Essential Words for daily conservation", progress: 0.6, totalCards: 126, dueCards: 17, estimatedMinutes: 5, progressColor: Color.streakPink),
+        DeckData(name: "English Vocabulary", description: "Essential Words for daily conservation", progress: 0.6, totalCards: 126, dueCards: 17, estimatedMinutes: 5, progressColor: Color.streakPink),
     ]
+
+    private var isRegular: Bool { sizeClass == .regular }
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 5) {
+            VStack(spacing: isRegular ? 14 : 5) {
                 header
-                    .padding(.bottom, 10)
-                OverdueBanner(count: 45)
+                    .padding(.bottom, isRegular ? 0 : 10)
+                OverdueBanner(count: 45, isRegular: isRegular)
                 StatsSectionView()
-                sectionDot
+                if !isRegular { sectionDot }
                 WeeklyChartView()
                 decksSection
             }
-            .padding(.horizontal, 15)
-            .padding(.top, 10)
+            .padding(.horizontal, isRegular ? 40 : 15)
+            .padding(.top, isRegular ? 20 : 10)
         }
         .background(Color.appBackground)
     }
 
+    // MARK: - Header
     private var header: some View {
         HStack {
-            ZStack {
-                Circle()
-                    .fill(Color.appBackground)
-                    .frame(width: 40, height: 40)
-                    .overlay(
-                        Circle().stroke(Color.learnedGreen.opacity(0.3), lineWidth: 1)
-                    )
-                Image(systemName: "bolt.fill")
-                    .font(.system(size: 18, weight: .bold))
-                    .foregroundStyle(Color.learnedGreen)
+            HStack(spacing: 10) {
+                ZStack {
+                    Circle()
+                        .fill(Color.appBackground)
+                        .frame(width: isRegular ? 50 : 40, height: isRegular ? 50 : 40)
+                        .overlay(
+                            Circle().stroke(Color.learnedGreen.opacity(0.3), lineWidth: 1)
+                        )
+                    Image(systemName: "bolt.fill")
+                        .font(.system(size: isRegular ? 22 : 18, weight: .bold))
+                        .foregroundStyle(Color.learnedGreen)
+                }
+                if isRegular {
+                    Text("KONIT Flash")
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundStyle(.white)
+                }
             }
             Spacer()
             Button {
@@ -44,9 +55,9 @@ struct HomeView: View {
                 ZStack {
                     Circle()
                         .fill(Color.white.opacity(0.1))
-                        .frame(width: 40, height: 40)
+                        .frame(width: isRegular ? 50 : 40, height: isRegular ? 50 : 40)
                     Image(systemName: "gearshape.fill")
-                        .font(.system(size: 18))
+                        .font(.system(size: isRegular ? 22 : 18))
                         .foregroundStyle(.white.opacity(0.7))
                 }
             }
@@ -60,11 +71,12 @@ struct HomeView: View {
             .padding(.vertical, 4)
     }
 
+    // MARK: - Decks Section
     private var decksSection: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
                 Text("My Flash Decks")
-                    .font(.system(size: 20, weight: .semibold))
+                    .font(.system(size: isRegular ? 24 : 20, weight: .semibold))
                     .foregroundStyle(.white)
                 Spacer()
                 Button {
@@ -76,15 +88,16 @@ struct HomeView: View {
                             .font(.system(size: 16, weight: .medium))
                     }
                     .foregroundStyle(.black)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(.white, in: RoundedRectangle(cornerRadius: 18))
+                    .padding(.horizontal, isRegular ? 24 : 16)
+                    .padding(.vertical, isRegular ? 10 : 8)
+                    .background(.white, in: RoundedRectangle(cornerRadius: isRegular ? 12 : 18))
                 }
             }
             .padding(.top, 6)
 
-            if sizeClass == .regular {
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 14), count: 3), spacing: 14) {
+            let columns = isRegular ? 3 : 1
+            if columns > 1 {
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: columns), spacing: 16) {
                     ForEach(sampleDecks) { deck in
                         DeckCardView(deck: deck)
                     }
@@ -98,6 +111,10 @@ struct HomeView: View {
     }
 }
 
-#Preview {
+#Preview("iPhone") {
+    HomeView()
+}
+
+#Preview("iPad") {
     HomeView()
 }

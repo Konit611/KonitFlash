@@ -77,15 +77,15 @@ struct DeckCardView: View {
             // Bottom action bar
             HStack(spacing: 0) {
                 // Cards info
-                HStack(spacing: 4) {
+                HStack(spacing: 3) {
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 13))
+                        .font(.system(size: 12))
                         .foregroundStyle(.white)
                     Text("\(deck.dueCards)")
-                        .font(.system(size: 16, weight: .bold))
+                        .font(.system(size: 15, weight: .bold))
                         .foregroundStyle(.white)
                     Text("cards")
-                        .font(.system(size: 12))
+                        .font(.system(size: 11))
                         .foregroundStyle(Color(hex: 0xC7C7C7))
                 }
 
@@ -93,39 +93,39 @@ struct DeckCardView: View {
                 Rectangle()
                     .fill(Color.white.opacity(0.2))
                     .frame(width: 1, height: 24)
-                    .padding(.horizontal, 16)
+                    .padding(.horizontal, 10)
 
                 // Time info
-                HStack(spacing: 4) {
+                HStack(spacing: 3) {
                     Image(systemName: "clock.fill")
-                        .font(.system(size: 13))
+                        .font(.system(size: 12))
                         .foregroundStyle(.white)
                     Text("\(deck.estimatedMinutes)")
-                        .font(.system(size: 16, weight: .bold))
+                        .font(.system(size: 15, weight: .bold))
                         .foregroundStyle(.white)
                     Text("min")
-                        .font(.system(size: 12))
+                        .font(.system(size: 11))
                         .foregroundStyle(Color(hex: 0xC7C7C7))
                 }
 
-                Spacer()
+                Spacer(minLength: 8)
 
                 // Start button
                 Button {
                 } label: {
                     HStack(spacing: 4) {
                         Text("Start")
-                            .font(.system(size: 16, weight: .semibold))
+                            .font(.system(size: 15, weight: .semibold))
                         Image(systemName: "arrow.right")
-                            .font(.system(size: 12, weight: .semibold))
+                            .font(.system(size: 11, weight: .semibold))
                     }
                     .foregroundStyle(.black)
-                    .padding(.horizontal, 16)
+                    .padding(.horizontal, 14)
                     .padding(.vertical, 6)
                     .background(.white, in: RoundedRectangle(cornerRadius: 12))
                 }
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 12)
             .padding(.vertical, 10)
             .background(.black, in: RoundedRectangle(cornerRadius: 20))
         }
