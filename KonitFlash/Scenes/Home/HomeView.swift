@@ -23,6 +23,10 @@ struct HomeView: View {
             .padding(.top, isRegular ? 20 : 10)
         }
         .background(Color.appBackground)
+        .navigationBarHidden(true)
+        .navigationDestination(for: UUID.self) { deckID in
+            DeckDetailView(deckID: deckID)
+        }
     }
 
     // MARK: - Header
@@ -96,12 +100,16 @@ struct HomeView: View {
             if columns > 1 {
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: columns), spacing: 16) {
                     ForEach(presenter.viewState.decks) { deck in
-                        DeckCardView(deck: deck)
+                        NavigationLink(value: deck.id) {
+                            DeckCardView(deck: deck)
+                        }
                     }
                 }
             } else {
                 ForEach(presenter.viewState.decks) { deck in
-                    DeckCardView(deck: deck)
+                    NavigationLink(value: deck.id) {
+                        DeckCardView(deck: deck)
+                    }
                 }
             }
         }
