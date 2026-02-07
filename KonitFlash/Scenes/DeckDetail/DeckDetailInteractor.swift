@@ -24,8 +24,16 @@ final class DeckDetailInteractor {
 
         let baseDate = Calendar.current.date(from: DateComponents(year: 2026, month: 1, day: 28))!
 
-        let cards = (0..<5).map { _ in
-            Card(front: "English", dueDate: baseDate, box: 5)
+        let sampleCards = [
+            ("Abandon", "포기하다, 버리다"),
+            ("Benefit", "이익, 혜택"),
+            ("Curious", "궁금한, 호기심 많은"),
+            ("Diligent", "근면한, 성실한"),
+            ("Elaborate", "정교한, 상세한"),
+        ]
+
+        let cards = sampleCards.map { front, back in
+            Card(front: front, back: back, dueDate: baseDate, box: 5)
         }
 
         return DeckDetailData(

@@ -2,6 +2,8 @@ import SwiftUI
 
 struct CardRowView: View {
     let card: CardRowData
+    var onEditTap: (() -> Void)?
+    var onDeleteTap: (() -> Void)?
     @Environment(\.horizontalSizeClass) private var sizeClass
 
     private var isRegular: Bool { sizeClass == .regular }
@@ -25,7 +27,13 @@ struct CardRowView: View {
 
             Spacer()
 
-            Button {
+            Menu {
+                Button { onEditTap?() } label: {
+                    Label("Edit Card", systemImage: "pencil")
+                }
+                Button(role: .destructive) { onDeleteTap?() } label: {
+                    Label("Delete Card", systemImage: "trash")
+                }
             } label: {
                 Image(systemName: "ellipsis")
                     .font(.system(size: isRegular ? 20 : 16, weight: .bold))

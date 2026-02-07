@@ -23,6 +23,10 @@ final class HomePresenter: ObservableObject {
         )
     }
 
+    func deleteDeck(id: UUID) {
+        viewState.decks.removeAll { $0.id == id }
+    }
+
     // MARK: - Mapping
 
     private func mapStats(_ stats: HomeStats) -> StatsViewData {

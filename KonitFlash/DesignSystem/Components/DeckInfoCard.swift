@@ -8,6 +8,7 @@ struct DeckInfoCard: View {
     let progress: Double
     let progressPercent: String
     let progressColor: Color
+    var onStartTap: (() -> Void)?
     @Environment(\.horizontalSizeClass) private var sizeClass
 
     private var isRegular: Bool { sizeClass == .regular }
@@ -76,6 +77,7 @@ struct DeckInfoCard: View {
                 Spacer(minLength: 16)
 
                 Button {
+                    onStartTap?()
                 } label: {
                     VStack(spacing: 6) {
                         Text("Start")
@@ -92,6 +94,7 @@ struct DeckInfoCard: View {
         .overlay(alignment: .topTrailing) {
             if !isRegular {
                 Button {
+                    onStartTap?()
                 } label: {
                     HStack(spacing: 4) {
                         Text("Start")

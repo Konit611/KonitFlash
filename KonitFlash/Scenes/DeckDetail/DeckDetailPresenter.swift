@@ -31,6 +31,10 @@ final class DeckDetailPresenter: ObservableObject {
         )
     }
 
+    func deleteCard(id: UUID) {
+        viewState.cards.removeAll { $0.id == id }
+    }
+
     // MARK: - Mapping
 
     private func mapCards(_ cards: [Card]) -> [CardRowData] {

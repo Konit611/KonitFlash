@@ -5,9 +5,18 @@ struct DeckDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.horizontalSizeClass) private var sizeClass
 
+    private let deckID: UUID
+    @State private var cardToDelete: CardRowData?
+    @State private var navTarget: DetailNavTarget?
     private var isRegular: Bool { sizeClass == .regular }
 
+    private enum DetailNavTarget: Hashable {
+        case flashCard
+        case editCard(UUID)
+    }
+
     init(deckID: UUID) {
+        self.deckID = deckID
         _presenter = StateObject(wrappedValue: DeckDetailPresenter(deckID: deckID))
     }
 
@@ -26,7 +35,8 @@ struct DeckDetailView: View {
                             totalCards: presenter.viewState.totalCards,
                             progress: presenter.viewState.progress,
                             progressPercent: presenter.viewState.progressPercent,
-                            progressColor: presenter.viewState.progressColor
+                            progressColor: presenter.viewState.progressColor,
+                            onStartTap: startStudy
                         )
 
                         DeckStatsSection(
@@ -44,7 +54,8 @@ struct DeckDetailView: View {
                         totalCards: presenter.viewState.totalCards,
                         progress: presenter.viewState.progress,
                         progressPercent: presenter.viewState.progressPercent,
-                        progressColor: presenter.viewState.progressColor
+                        progressColor: presenter.viewState.progressColor,
+                        onStartTap: startStudy
                     )
 
                     DeckStatsSection(
@@ -61,59 +72,46 @@ struct DeckDetailView: View {
         }
         .background(Color.appBackground)
         .navigationBarHidden(true)
+        .navigationDestination(isPresented: Binding(
+            get: { navTarget != nil },
+            set: { if !$0 { navTarget = nil } }
+        )) {
+            switch navTarget {
+            case .flashCard:
+                FlashCardView(deckID: deckID)
+            case .editCard(let cardID):
+                AddCardView(deckID: deckID, editingCardID: cardID)
+            case nil:
+                EmptyView()
+            }
+        }
+        .confirmationDialog(
+            "Delete \"\(cardToDelete?.name ?? "")\"?",
+            isPresented: Binding(
+                get: { cardToDelete != nil },
+                set: { if !$0 { cardToDelete = nil } }
+            ),
+            titleVisibility: .visible
+        ) {
+            Button("Delete", role: .destructive) {
+                if let card = cardToDelete {
+                    presenter.deleteCard(id: card.id)
+                    cardToDelete = nil
+                }
+            }
+        } message: {
+            Text("This card will be permanently deleted.")
+        }
+    }
+
+    private func startStudy() {
+        navTarget = .flashCard
     }
 
     // MARK: - Header
 
     private var header: some View {
-        HStack {
-            if isRegular {
-                HStack(spacing: 10) {
-                    ZStack {
-                        Circle()
-                            .fill(Color.appBackground)
-                            .frame(width: 50, height: 50)
-                            .overlay(
-                                Circle().stroke(Color.learnedGreen.opacity(0.3), lineWidth: 1)
-                            )
-                        Image(systemName: "bolt.fill")
-                            .font(.system(size: 22, weight: .bold))
-                            .foregroundStyle(Color.learnedGreen)
-                    }
-                    .onTapGesture { dismiss() }
-                    Text("KONIT Flash")
-                        .font(.system(size: 24, weight: .bold))
-                        .foregroundStyle(.white)
-                }
-            } else {
-                Button {
-                    dismiss()
-                } label: {
-                    ZStack {
-                        Circle()
-                            .fill(Color.white.opacity(0.1))
-                            .frame(width: 40, height: 40)
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundStyle(.white)
-                    }
-                }
-            }
-
-            Spacer()
-
-            Button {
-            } label: {
-                ZStack {
-                    Circle()
-                        .fill(Color.white.opacity(0.1))
-                        .frame(width: isRegular ? 50 : 40, height: isRegular ? 50 : 40)
-                    Image(systemName: "gearshape.fill")
-                        .font(.system(size: isRegular ? 22 : 18))
-                        .foregroundStyle(.white.opacity(0.7))
-                }
-            }
-        }
+        AppHeaderView(showSettings: true, onDismiss: { dismiss() })
     }
 
     // MARK: - Cards Section
@@ -125,8 +123,7 @@ struct DeckDetailView: View {
                     .font(.system(size: isRegular ? 32 : 20, weight: .semibold))
                     .foregroundStyle(.white)
                 Spacer()
-                Button {
-                } label: {
+                NavigationLink(value: NavigationRoute.addCard(deckID: deckID)) {
                     HStack(spacing: 4) {
                         Image(systemName: "plus")
                             .font(.system(size: isRegular ? 16 : 14, weight: .medium))
@@ -142,7 +139,11 @@ struct DeckDetailView: View {
             .padding(.top, 6)
 
             ForEach(presenter.viewState.cards) { card in
-                CardRowView(card: card)
+                CardRowView(
+                    card: card,
+                    onEditTap: { navTarget = .editCard(card.id) },
+                    onDeleteTap: { cardToDelete = card }
+                )
             }
         }
     }

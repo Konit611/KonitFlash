@@ -2,6 +2,9 @@ import SwiftUI
 
 struct DeckCardView: View {
     let deck: DeckViewData
+    var onStartTap: (() -> Void)?
+    var onEditTap: (() -> Void)?
+    var onDeleteTap: (() -> Void)?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -10,7 +13,13 @@ struct DeckCardView: View {
                     .font(.system(size: 24, weight: .bold))
                     .foregroundStyle(.black)
                 Spacer()
-                Button {
+                Menu {
+                    Button { onEditTap?() } label: {
+                        Label("Edit Deck", systemImage: "pencil")
+                    }
+                    Button(role: .destructive) { onDeleteTap?() } label: {
+                        Label("Delete Deck", systemImage: "trash")
+                    }
                 } label: {
                     Image(systemName: "ellipsis")
                         .font(.system(size: 16, weight: .bold))
@@ -92,6 +101,7 @@ struct DeckCardView: View {
                 Spacer(minLength: 8)
 
                 Button {
+                    onStartTap?()
                 } label: {
                     HStack(spacing: 4) {
                         Text("Start")

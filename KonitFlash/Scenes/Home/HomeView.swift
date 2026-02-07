@@ -2,7 +2,9 @@ import SwiftUI
 
 struct HomeView: View {
     @StateObject private var presenter = HomePresenter()
+    @Binding var path: NavigationPath
     @Environment(\.horizontalSizeClass) private var sizeClass
+    @State private var deckToDelete: DeckViewData?
 
     private var isRegular: Bool { sizeClass == .regular }
 
@@ -24,45 +26,42 @@ struct HomeView: View {
         }
         .background(Color.appBackground)
         .navigationBarHidden(true)
-        .navigationDestination(for: UUID.self) { deckID in
-            DeckDetailView(deckID: deckID)
+        .confirmationDialog(
+            "Delete \"\(deckToDelete?.name ?? "")\"?",
+            isPresented: Binding(
+                get: { deckToDelete != nil },
+                set: { if !$0 { deckToDelete = nil } }
+            ),
+            titleVisibility: .visible
+        ) {
+            Button("Delete", role: .destructive) {
+                if let deck = deckToDelete {
+                    presenter.deleteDeck(id: deck.id)
+                    deckToDelete = nil
+                }
+            }
+        } message: {
+            Text("This deck and all its cards will be permanently deleted.")
         }
     }
 
     // MARK: - Header
     private var header: some View {
-        HStack {
-            HStack(spacing: 10) {
-                ZStack {
-                    Circle()
-                        .fill(Color.appBackground)
-                        .frame(width: isRegular ? 50 : 40, height: isRegular ? 50 : 40)
-                        .overlay(
-                            Circle().stroke(Color.learnedGreen.opacity(0.3), lineWidth: 1)
-                        )
-                    Image(systemName: "bolt.fill")
-                        .font(.system(size: isRegular ? 22 : 18, weight: .bold))
-                        .foregroundStyle(Color.learnedGreen)
-                }
-                if isRegular {
-                    Text("KONIT Flash")
-                        .font(.system(size: 24, weight: .bold))
-                        .foregroundStyle(.white)
-                }
-            }
-            Spacer()
-            Button {
-            } label: {
-                ZStack {
-                    Circle()
-                        .fill(Color.white.opacity(0.1))
-                        .frame(width: isRegular ? 50 : 40, height: isRegular ? 50 : 40)
-                    Image(systemName: "gearshape.fill")
-                        .font(.system(size: isRegular ? 22 : 18))
-                        .foregroundStyle(.white.opacity(0.7))
-                }
-            }
+        AppHeaderView(showSettings: true)
+    }
+
+    private func deckCard(for deck: DeckViewData) -> some View {
+        Button {
+            path.append(NavigationRoute.deckDetail(deck.id))
+        } label: {
+            DeckCardView(
+                deck: deck,
+                onStartTap: { path.append(NavigationRoute.flashCard(deckID: deck.id)) },
+                onEditTap: { path.append(NavigationRoute.editDeck(deckID: deck.id)) },
+                onDeleteTap: { deckToDelete = deck }
+            )
         }
+        .buttonStyle(CardPressStyle())
     }
 
     private var sectionDot: some View {
@@ -80,8 +79,7 @@ struct HomeView: View {
                     .font(.system(size: isRegular ? 24 : 20, weight: .semibold))
                     .foregroundStyle(.white)
                 Spacer()
-                Button {
-                } label: {
+                NavigationLink(value: NavigationRoute.addDeck) {
                     HStack(spacing: 4) {
                         Image(systemName: "plus")
                             .font(.system(size: 14, weight: .medium))
@@ -100,16 +98,12 @@ struct HomeView: View {
             if columns > 1 {
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: columns), spacing: 16) {
                     ForEach(presenter.viewState.decks) { deck in
-                        NavigationLink(value: deck.id) {
-                            DeckCardView(deck: deck)
-                        }
+                        deckCard(for: deck)
                     }
                 }
             } else {
                 ForEach(presenter.viewState.decks) { deck in
-                    NavigationLink(value: deck.id) {
-                        DeckCardView(deck: deck)
-                    }
+                    deckCard(for: deck)
                 }
             }
         }
@@ -117,9 +111,9 @@ struct HomeView: View {
 }
 
 #Preview("iPhone") {
-    HomeView()
+    ContentView()
 }
 
 #Preview("iPad") {
-    HomeView()
+    ContentView()
 }
