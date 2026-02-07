@@ -1,13 +1,8 @@
 import SwiftUI
 
 struct HomeView: View {
+    @StateObject private var presenter = HomePresenter()
     @Environment(\.horizontalSizeClass) private var sizeClass
-
-    private let sampleDecks: [DeckData] = [
-        DeckData(name: "English Vocabulary", description: "Essential Words for daily conservation", progress: 0.6, totalCards: 126, dueCards: 17, estimatedMinutes: 5, progressColor: Color.streakPink),
-        DeckData(name: "English Vocabulary", description: "Essential Words for daily conservation", progress: 0.6, totalCards: 126, dueCards: 17, estimatedMinutes: 5, progressColor: Color.streakPink),
-        DeckData(name: "English Vocabulary", description: "Essential Words for daily conservation", progress: 0.6, totalCards: 126, dueCards: 17, estimatedMinutes: 5, progressColor: Color.streakPink),
-    ]
 
     private var isRegular: Bool { sizeClass == .regular }
 
@@ -16,10 +11,12 @@ struct HomeView: View {
             VStack(spacing: isRegular ? 14 : 5) {
                 header
                     .padding(.bottom, isRegular ? 0 : 10)
-                OverdueBanner(count: 45, isRegular: isRegular)
-                StatsSectionView()
+                if presenter.viewState.showOverdueBanner {
+                    OverdueBanner(count: presenter.viewState.overdueCount, isRegular: isRegular)
+                }
+                StatsSectionView(stats: presenter.viewState.stats)
                 if !isRegular { sectionDot }
-                WeeklyChartView()
+                WeeklyChartView(data: presenter.viewState.weeklyData)
                 decksSection
             }
             .padding(.horizontal, isRegular ? 40 : 15)
@@ -98,12 +95,12 @@ struct HomeView: View {
             let columns = isRegular ? 3 : 1
             if columns > 1 {
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: columns), spacing: 16) {
-                    ForEach(sampleDecks) { deck in
+                    ForEach(presenter.viewState.decks) { deck in
                         DeckCardView(deck: deck)
                     }
                 }
             } else {
-                ForEach(sampleDecks) { deck in
+                ForEach(presenter.viewState.decks) { deck in
                     DeckCardView(deck: deck)
                 }
             }

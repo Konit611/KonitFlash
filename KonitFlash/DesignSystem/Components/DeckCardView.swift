@@ -1,22 +1,10 @@
 import SwiftUI
 
-struct DeckData: Identifiable {
-    let id = UUID()
-    let name: String
-    let description: String
-    let progress: Double
-    let totalCards: Int
-    let dueCards: Int
-    let estimatedMinutes: Int
-    let progressColor: Color
-}
-
 struct DeckCardView: View {
-    let deck: DeckData
+    let deck: DeckViewData
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // Title + menu
             HStack(alignment: .top) {
                 Text(deck.name)
                     .font(.system(size: 24, weight: .bold))
@@ -32,17 +20,15 @@ struct DeckCardView: View {
             }
             .padding(.bottom, 6)
 
-            // Description
             Text(deck.description)
                 .font(.system(size: 15))
                 .foregroundStyle(Color(hex: 0x555555))
                 .lineLimit(1)
                 .padding(.bottom, 14)
 
-            // Total count + progress bar
             HStack(spacing: 10) {
                 VStack(spacing: 2) {
-                    Text("\(deck.totalCards)")
+                    Text(deck.totalCards)
                         .font(.system(size: 16, weight: .bold))
                         .foregroundStyle(.black)
                     Text("Total")
@@ -53,11 +39,10 @@ struct DeckCardView: View {
                 VStack(spacing: 4) {
                     HStack {
                         Spacer()
-                        Text("\(Int(deck.progress * 100))%")
+                        Text(deck.progressPercent)
                             .font(.system(size: 12, weight: .semibold))
                             .foregroundStyle(Color(hex: 0x9095A1))
                     }
-                    // Custom progress bar
                     GeometryReader { geo in
                         ZStack(alignment: .leading) {
                             RoundedRectangle(cornerRadius: 30)
@@ -74,9 +59,7 @@ struct DeckCardView: View {
             }
             .padding(.bottom, 16)
 
-            // Bottom action bar
             HStack(spacing: 0) {
-                // Cards info
                 HStack(spacing: 3) {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.system(size: 12))
@@ -89,13 +72,11 @@ struct DeckCardView: View {
                         .foregroundStyle(Color(hex: 0xC7C7C7))
                 }
 
-                // Divider
                 Rectangle()
                     .fill(Color.white.opacity(0.2))
                     .frame(width: 1, height: 24)
                     .padding(.horizontal, 10)
 
-                // Time info
                 HStack(spacing: 3) {
                     Image(systemName: "clock.fill")
                         .font(.system(size: 12))
@@ -110,7 +91,6 @@ struct DeckCardView: View {
 
                 Spacer(minLength: 8)
 
-                // Start button
                 Button {
                 } label: {
                     HStack(spacing: 4) {
@@ -136,20 +116,24 @@ struct DeckCardView: View {
 
 #Preview {
     VStack(spacing: 10) {
-        DeckCardView(deck: DeckData(
+        DeckCardView(deck: DeckViewData(
+            id: UUID(),
             name: "English Vocabulary",
             description: "Essential Words for daily conservation",
             progress: 0.6,
-            totalCards: 126,
+            progressPercent: "60%",
+            totalCards: "126",
             dueCards: 17,
             estimatedMinutes: 5,
             progressColor: Color.streakPink
         ))
-        DeckCardView(deck: DeckData(
+        DeckCardView(deck: DeckViewData(
+            id: UUID(),
             name: "English Vocabulary",
             description: "Essential Words for daily conservation",
             progress: 0.6,
-            totalCards: 126,
+            progressPercent: "60%",
+            totalCards: "126",
             dueCards: 17,
             estimatedMinutes: 5,
             progressColor: Color.learnedGreen

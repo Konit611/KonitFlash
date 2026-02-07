@@ -1,15 +1,11 @@
 import SwiftUI
 
 struct WeeklyChartView: View {
+    let data: [DayBarData]
     @Environment(\.horizontalSizeClass) private var sizeClass
 
-    private let days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-    private let totals = [43, 18, 21, 21, 11, 52, 24]
-    private let completed = [43, 6, 0, 0, 0, 0, 0]
-    private let todayIndex = 2 // Wednesday
-
     private var isRegular: Bool { sizeClass == .regular }
-    private var maxTotal: Int { totals.max() ?? 1 }
+    private var maxTotal: Int { data.map(\.totalCards).max() ?? 1 }
 
     var body: some View {
         VStack(alignment: .leading, spacing: isRegular ? 16 : 12) {
@@ -19,21 +15,18 @@ struct WeeklyChartView: View {
 
             GeometryReader { geo in
                 let spacing: CGFloat = isRegular ? 12 : 0
-                let availableWidth = geo.size.width - (spacing * CGFloat(days.count - 1))
-                let barWidth = isRegular ? (availableWidth / CGFloat(days.count)) : geo.size.width / CGFloat(days.count)
+                let availableWidth = geo.size.width - (spacing * CGFloat(data.count - 1))
+                let barWidth = isRegular ? (availableWidth / CGFloat(data.count)) : geo.size.width / CGFloat(data.count)
                 let chartHeight = geo.size.height - (isRegular ? 30 : 24)
 
                 HStack(alignment: .bottom, spacing: spacing) {
-                    ForEach(Array(days.enumerated()), id: \.offset) { index, day in
+                    ForEach(data) { bar in
                         VStack(spacing: isRegular ? 8 : 4) {
-                            // Count label
-                            Text("\(completed[index])/\(totals[index])")
+                            Text(bar.completionLabel)
                                 .font(.system(size: isRegular ? 12 : 8))
                                 .foregroundStyle(Color(hex: 0x777F8F))
 
-                            // Bar
                             ZStack(alignment: .bottom) {
-                                // Background bar
                                 UnevenRoundedRectangle(
                                     topLeadingRadius: isRegular ? 30 : 5,
                                     bottomLeadingRadius: 0,
@@ -43,11 +36,10 @@ struct WeeklyChartView: View {
                                 .fill(Color.weeklyMintLight)
                                 .frame(
                                     width: isRegular ? barWidth : 7,
-                                    height: barHeight(for: totals[index], maxHeight: chartHeight - 20)
+                                    height: barHeight(for: bar.totalCards, maxHeight: chartHeight - 20)
                                 )
 
-                                // Filled bar
-                                if completed[index] > 0 {
+                                if bar.completedCards > 0 {
                                     UnevenRoundedRectangle(
                                         topLeadingRadius: isRegular ? 30 : 5,
                                         bottomLeadingRadius: 0,
@@ -57,16 +49,15 @@ struct WeeklyChartView: View {
                                     .fill(Color.weeklyCompleted)
                                     .frame(
                                         width: isRegular ? barWidth : 7,
-                                        height: barHeight(for: completed[index], maxHeight: chartHeight - 20)
+                                        height: barHeight(for: bar.completedCards, maxHeight: chartHeight - 20)
                                     )
                                 }
                             }
                             .frame(maxHeight: .infinity, alignment: .bottom)
 
-                            // Day label
-                            Text(day)
-                                .font(.system(size: isRegular ? 16 : 12, weight: index == todayIndex ? .semibold : .regular))
-                                .foregroundStyle(index == todayIndex ? Color(hex: 0x060606) : Color(hex: 0x7C6172))
+                            Text(bar.dayLabel)
+                                .font(.system(size: isRegular ? 16 : 12, weight: bar.isToday ? .semibold : .regular))
+                                .foregroundStyle(bar.isToday ? Color(hex: 0x060606) : Color(hex: 0x7C6172))
                         }
                         .frame(maxWidth: isRegular ? nil : .infinity)
                     }
@@ -85,14 +76,30 @@ struct WeeklyChartView: View {
 }
 
 #Preview("iPhone") {
-    WeeklyChartView()
-        .padding()
-        .background(Color.appBackground)
+    WeeklyChartView(data: [
+        DayBarData(dayLabel: "Mon", totalCards: 43, completedCards: 43, isToday: false),
+        DayBarData(dayLabel: "Tue", totalCards: 18, completedCards: 6, isToday: false),
+        DayBarData(dayLabel: "Wed", totalCards: 21, completedCards: 0, isToday: true),
+        DayBarData(dayLabel: "Thu", totalCards: 21, completedCards: 0, isToday: false),
+        DayBarData(dayLabel: "Fri", totalCards: 11, completedCards: 0, isToday: false),
+        DayBarData(dayLabel: "Sat", totalCards: 52, completedCards: 0, isToday: false),
+        DayBarData(dayLabel: "Sun", totalCards: 24, completedCards: 0, isToday: false),
+    ])
+    .padding()
+    .background(Color.appBackground)
 }
 
 #Preview("Mac") {
-    WeeklyChartView()
-        .padding(64)
-        .frame(width: 1440)
-        .background(Color.appBackground)
+    WeeklyChartView(data: [
+        DayBarData(dayLabel: "Mon", totalCards: 43, completedCards: 43, isToday: false),
+        DayBarData(dayLabel: "Tue", totalCards: 18, completedCards: 6, isToday: false),
+        DayBarData(dayLabel: "Wed", totalCards: 21, completedCards: 0, isToday: true),
+        DayBarData(dayLabel: "Thu", totalCards: 21, completedCards: 0, isToday: false),
+        DayBarData(dayLabel: "Fri", totalCards: 11, completedCards: 0, isToday: false),
+        DayBarData(dayLabel: "Sat", totalCards: 52, completedCards: 0, isToday: false),
+        DayBarData(dayLabel: "Sun", totalCards: 24, completedCards: 0, isToday: false),
+    ])
+    .padding(64)
+    .frame(width: 1440)
+    .background(Color.appBackground)
 }

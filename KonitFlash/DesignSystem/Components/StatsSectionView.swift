@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct StatsSectionView: View {
+    let stats: StatsViewData
     @Environment(\.horizontalSizeClass) private var sizeClass
 
     private var isRegular: Bool { sizeClass == .regular }
@@ -34,7 +35,7 @@ struct StatsSectionView: View {
             }
             .padding(.bottom, isRegular ? 16 : 12)
 
-            Text("12")
+            Text(stats.streakText)
                 .font(.system(size: isRegular ? 48 : 36, weight: .bold))
                 .foregroundStyle(.black)
             Text("STREAK")
@@ -45,7 +46,7 @@ struct StatsSectionView: View {
 
             Spacer()
 
-            Text("Keep it up !")
+            Text(stats.streakMessage)
                 .font(.system(size: isRegular ? 14 : 11, weight: .bold))
                 .foregroundStyle(.black)
                 .padding(.horizontal, isRegular ? 16 : 12)
@@ -64,12 +65,11 @@ struct StatsSectionView: View {
                 .foregroundStyle(.black)
 
             HStack(spacing: isRegular ? 12 : 5) {
-                // Learned sub-card
                 VStack(spacing: isRegular ? 6 : 6) {
                     Image(systemName: "book.fill")
                         .font(.system(size: isRegular ? 16 : 16))
                         .foregroundStyle(.black.opacity(0.6))
-                    Text("342")
+                    Text(stats.learnedText)
                         .font(.system(size: isRegular ? 48 : 32, weight: .bold))
                         .foregroundStyle(.black)
                         .minimumScaleFactor(0.5)
@@ -83,12 +83,11 @@ struct StatsSectionView: View {
                 .padding(.vertical, isRegular ? 14 : 14)
                 .background(Color.reviewsGreen, in: RoundedRectangle(cornerRadius: 18))
 
-                // Reviews sub-card
                 VStack(spacing: isRegular ? 6 : 6) {
                     Image(systemName: "square.3.layers.3d")
                         .font(.system(size: isRegular ? 16 : 16))
                         .foregroundStyle(.black.opacity(0.6))
-                    Text("1245")
+                    Text(stats.reviewsText)
                         .font(.system(size: isRegular ? 48 : 32, weight: .bold))
                         .foregroundStyle(.black)
                         .minimumScaleFactor(0.5)
@@ -110,14 +109,24 @@ struct StatsSectionView: View {
 }
 
 #Preview("iPhone") {
-    StatsSectionView()
-        .padding()
-        .background(Color.appBackground)
+    StatsSectionView(stats: StatsViewData(
+        streakText: "12",
+        streakMessage: "Keep it up !",
+        learnedText: "342",
+        reviewsText: "1245"
+    ))
+    .padding()
+    .background(Color.appBackground)
 }
 
 #Preview("iPad") {
-    StatsSectionView()
-        .padding(64)
-        .frame(width: 1440)
-        .background(Color.appBackground)
+    StatsSectionView(stats: StatsViewData(
+        streakText: "12",
+        streakMessage: "Keep it up !",
+        learnedText: "342",
+        reviewsText: "1245"
+    ))
+    .padding(64)
+    .frame(width: 1440)
+    .background(Color.appBackground)
 }
