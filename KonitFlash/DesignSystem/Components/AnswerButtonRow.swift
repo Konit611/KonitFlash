@@ -4,11 +4,12 @@ enum AnswerGrade: CaseIterable {
     case again, hard, good, easy
 
     var label: String {
+        let bundle = LanguageManager.shared.bundle
         switch self {
-        case .again: "Again"
-        case .hard: "Hard"
-        case .good: "Good"
-        case .easy: "Easy"
+        case .again: return String(localized: "Again", bundle: bundle)
+        case .hard: return String(localized: "Hard", bundle: bundle)
+        case .good: return String(localized: "Good", bundle: bundle)
+        case .easy: return String(localized: "Easy", bundle: bundle)
         }
     }
 

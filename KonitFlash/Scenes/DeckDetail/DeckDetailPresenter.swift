@@ -6,11 +6,18 @@ final class DeckDetailPresenter: ObservableObject {
 
     private let interactor: DeckDetailInteractor
     private let deckID: UUID
+    private var cancellables = Set<AnyCancellable>()
 
     init(interactor: DeckDetailInteractor = DeckDetailInteractor(), deckID: UUID) {
         self.interactor = interactor
         self.deckID = deckID
         loadData()
+
+        LanguageManager.shared.$locale
+            .dropFirst()
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in self?.loadData() }
+            .store(in: &cancellables)
     }
 
     func loadData() {
@@ -39,13 +46,14 @@ final class DeckDetailPresenter: ObservableObject {
 
     private func mapCards(_ cards: [Card]) -> [CardRowData] {
         let formatter = DateFormatter()
-        formatter.dateFormat = "MM/dd/yyyy"
+        formatter.dateStyle = .short
 
+        let bundle = LanguageManager.shared.bundle
         return cards.map { card in
             CardRowData(
                 id: card.id,
                 name: card.front,
-                dueDateText: "Due: \(formatter.string(from: card.dueDate))",
+                dueDateText: String(localized: "Due: \(formatter.string(from: card.dueDate))", bundle: bundle),
                 box: card.box
             )
         }

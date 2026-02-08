@@ -6,6 +6,6 @@ struct AddCardViewState {
     var front: String = ""
     var back: String = ""
     var isSaveEnabled: Bool = false
-    var headerTitle: String = "Add Card"
-    var buttonTitle: String = "Add Card"
+    var headerTitle: String = String(localized: "Add Card", bundle: LanguageManager.shared.bundle)
+    var buttonTitle: String = String(localized: "Add Card", bundle: LanguageManager.shared.bundle)
 }

@@ -62,7 +62,8 @@ final class AddCardPresenter: ObservableObject {
         viewState.front = data.front
         viewState.back = data.back
         viewState.isSaveEnabled = true
-        viewState.headerTitle = "Edit Card"
-        viewState.buttonTitle = "Save Changes"
+        let bundle = LanguageManager.shared.bundle
+        viewState.headerTitle = String(localized: "Edit Card", bundle: bundle)
+        viewState.buttonTitle = String(localized: "Save Changes", bundle: bundle)
     }
 }

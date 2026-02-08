@@ -59,7 +59,7 @@ struct AppHeaderView: View {
     @ViewBuilder
     private var trailingContent: some View {
         if showSettings {
-            Button {} label: {
+            NavigationLink(value: NavigationRoute.settings) {
                 ZStack {
                     Circle()
                         .fill(Color.white.opacity(0.1))

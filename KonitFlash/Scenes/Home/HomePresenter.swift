@@ -5,10 +5,17 @@ final class HomePresenter: ObservableObject {
     @Published var viewState = HomeViewState()
 
     private let interactor: HomeInteractor
+    private var cancellables = Set<AnyCancellable>()
 
     init(interactor: HomeInteractor = HomeInteractor()) {
         self.interactor = interactor
         loadData()
+
+        LanguageManager.shared.$locale
+            .dropFirst()
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in self?.loadData() }
+            .store(in: &cancellables)
     }
 
     func loadData() {
@@ -39,12 +46,13 @@ final class HomePresenter: ObservableObject {
     }
 
     private func streakMessage(for days: Int) -> String {
+        let bundle = LanguageManager.shared.bundle
         if days >= 7 {
-            return "Keep it up !"
+            return String(localized: "Keep it up !", bundle: bundle)
         } else if days >= 3 {
-            return "Nice going !"
+            return String(localized: "Nice going !", bundle: bundle)
         } else {
-            return "Let's start !"
+            return String(localized: "Let's start !", bundle: bundle)
         }
     }
 

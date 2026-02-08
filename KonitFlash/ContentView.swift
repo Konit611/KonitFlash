@@ -20,6 +20,8 @@ struct ContentView: View {
                         AddCardView(deckID: deckID, editingCardID: cardID)
                     case .flashCard(let id):
                         FlashCardView(deckID: id)
+                    case .settings:
+                        SettingsView()
                     }
                 }
         }

@@ -6,6 +6,6 @@ struct AddDeckViewState {
     var description: String = ""
     var selectedColorTag: ColorTag = .pink
     var isSaveEnabled: Bool = false
-    var headerTitle: String = "New Deck"
-    var buttonTitle: String = "Create Deck"
+    var headerTitle: String = String(localized: "New Deck", bundle: LanguageManager.shared.bundle)
+    var buttonTitle: String = String(localized: "Create Deck", bundle: LanguageManager.shared.bundle)
 }

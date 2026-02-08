@@ -50,7 +50,8 @@ final class AddDeckPresenter: ObservableObject {
         viewState.description = data.description
         viewState.selectedColorTag = data.colorTag
         viewState.isSaveEnabled = true
-        viewState.headerTitle = "Edit Deck"
-        viewState.buttonTitle = "Save Changes"
+        let bundle = LanguageManager.shared.bundle
+        viewState.headerTitle = String(localized: "Edit Deck", bundle: bundle)
+        viewState.buttonTitle = String(localized: "Save Changes", bundle: bundle)
     }
 }

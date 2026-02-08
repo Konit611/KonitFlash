@@ -74,13 +74,14 @@ final class FlashCardPresenter: ObservableObject {
         let seconds = result.elapsedSeconds % 60
         let timeText = "\(minutes):\(String(format: "%02d", seconds))"
 
+        let bundle = LanguageManager.shared.bundle
         let message: String
         if accuracy >= 80 {
-            message = "Excellent work! Keep it up!"
+            message = String(localized: "Excellent work! Keep it up!", bundle: bundle)
         } else if accuracy >= 60 {
-            message = "Good effort! Practice makes perfect."
+            message = String(localized: "Good effort! Practice makes perfect.", bundle: bundle)
         } else {
-            message = "Keep studying! You'll get there."
+            message = String(localized: "Keep studying! You'll get there.", bundle: bundle)
         }
 
         viewState.phase = .result
