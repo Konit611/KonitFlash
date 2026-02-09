@@ -1,15 +1,18 @@
 import Combine
 import Foundation
+import SwiftData
 
 final class AddDeckPresenter: ObservableObject {
     @Published var viewState = AddDeckViewState()
 
-    private let interactor: AddDeckInteractor
-    private let editingDeckID: UUID?
+    private var interactor: AddDeckInteractor?
+    private var editingDeckID: UUID?
 
-    init(interactor: AddDeckInteractor = AddDeckInteractor(), editingDeckID: UUID? = nil) {
-        self.interactor = interactor
+    func configure(modelContext: ModelContext, editingDeckID: UUID? = nil) {
         self.editingDeckID = editingDeckID
+
+        if interactor != nil { return }
+        self.interactor = AddDeckInteractor(modelContext: modelContext)
 
         if let editingDeckID {
             loadEditData(deckID: editingDeckID)
@@ -30,6 +33,7 @@ final class AddDeckPresenter: ObservableObject {
     }
 
     func saveDeck() {
+        guard let interactor else { return }
         let input = AddDeckInput(
             name: viewState.name.trimmingCharacters(in: .whitespaces),
             description: viewState.description.trimmingCharacters(in: .whitespaces),
@@ -44,7 +48,7 @@ final class AddDeckPresenter: ObservableObject {
     }
 
     private func loadEditData(deckID: UUID) {
-        let data = interactor.fetchDeck(deckID: deckID)
+        guard let data = interactor?.fetchDeck(deckID: deckID) else { return }
         viewState.isEditMode = true
         viewState.name = data.name
         viewState.description = data.description

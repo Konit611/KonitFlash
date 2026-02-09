@@ -1,34 +1,45 @@
 import Combine
 import Foundation
+import SwiftData
 
 final class FlashCardPresenter: ObservableObject {
     @Published var viewState = FlashCardViewState()
 
-    private let interactor: FlashCardInteractor
-    private let deckID: UUID
+    private var interactor: FlashCardInteractor?
+    private var deckID: UUID?
     private var cards: [Card] = []
     private var currentCardIndex: Int = 0
 
-    init(interactor: FlashCardInteractor = FlashCardInteractor(), deckID: UUID) {
-        self.interactor = interactor
+    func configure(modelContext: ModelContext, deckID: UUID) {
         self.deckID = deckID
+
+        if interactor != nil {
+            loadData()
+            return
+        }
+        self.interactor = FlashCardInteractor(modelContext: modelContext)
         loadData()
     }
 
     func loadData() {
+        guard let interactor, let deckID else { return }
         let session = interactor.fetchStudySession(deckID: deckID)
         cards = session.cards
         currentCardIndex = 0
 
         viewState.deckName = session.deckName
         viewState.totalCount = cards.count
-        viewState.phase = .studying
 
-        showCurrentCard()
+        if cards.isEmpty {
+            viewState.phase = .empty
+        } else {
+            viewState.phase = .studying
+            showCurrentCard()
+        }
     }
 
     func answerCard(grade: AnswerGrade) {
-        guard currentCardIndex < cards.count else { return }
+        guard let interactor, currentCardIndex < cards.count else { return }
 
         let card = cards[currentCardIndex]
         interactor.recordAnswer(card: card, grade: grade)
@@ -53,7 +64,7 @@ final class FlashCardPresenter: ObservableObject {
     // MARK: - Private
 
     private func showCurrentCard() {
-        guard currentCardIndex < cards.count else { return }
+        guard let interactor, currentCardIndex < cards.count else { return }
 
         let card = cards[currentCardIndex]
         viewState.currentIndex = currentCardIndex + 1
@@ -64,6 +75,7 @@ final class FlashCardPresenter: ObservableObject {
     }
 
     private func showResult() {
+        guard let interactor else { return }
         let result = interactor.computeStudyResult()
 
         let accuracy = result.totalCards > 0

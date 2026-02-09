@@ -5,11 +5,11 @@ struct WeeklyChartView: View {
     @Environment(\.horizontalSizeClass) private var sizeClass
 
     private var isRegular: Bool { sizeClass == .regular }
-    private var maxTotal: Int { data.map(\.totalCards).max() ?? 1 }
+    private var maxStudied: Int { max(data.map(\.studiedCards).max() ?? 1, 1) }
 
     var body: some View {
         VStack(alignment: .leading, spacing: isRegular ? 16 : 12) {
-            Text("Weekly Completion")
+            Text("Weekly Activity", bundle: LanguageManager.shared.bundle)
                 .font(.system(size: isRegular ? 18 : 14, weight: .bold))
                 .foregroundStyle(.black)
 
@@ -22,37 +22,26 @@ struct WeeklyChartView: View {
                 HStack(alignment: .bottom, spacing: spacing) {
                     ForEach(data) { bar in
                         VStack(spacing: isRegular ? 8 : 4) {
-                            Text(bar.completionLabel)
-                                .font(.system(size: isRegular ? 12 : 8))
-                                .foregroundStyle(Color(hex: 0x777F8F))
-
-                            ZStack(alignment: .bottom) {
-                                UnevenRoundedRectangle(
-                                    topLeadingRadius: isRegular ? 30 : 5,
-                                    bottomLeadingRadius: 0,
-                                    bottomTrailingRadius: 0,
-                                    topTrailingRadius: isRegular ? 30 : 5
-                                )
-                                .fill(Color.weeklyMintLight)
-                                .frame(
-                                    width: isRegular ? barWidth : 7,
-                                    height: barHeight(for: bar.totalCards, maxHeight: chartHeight - 20)
-                                )
-
-                                if bar.completedCards > 0 {
-                                    UnevenRoundedRectangle(
-                                        topLeadingRadius: isRegular ? 30 : 5,
-                                        bottomLeadingRadius: 0,
-                                        bottomTrailingRadius: 0,
-                                        topTrailingRadius: isRegular ? 30 : 5
-                                    )
-                                    .fill(Color.weeklyCompleted)
-                                    .frame(
-                                        width: isRegular ? barWidth : 7,
-                                        height: barHeight(for: bar.completedCards, maxHeight: chartHeight - 20)
-                                    )
-                                }
+                            if bar.studiedCards > 0 {
+                                Text("\(bar.studiedCards)")
+                                    .font(.system(size: isRegular ? 12 : 8))
+                                    .foregroundStyle(Color(hex: 0x777F8F))
+                            } else {
+                                Text("")
+                                    .font(.system(size: isRegular ? 12 : 8))
                             }
+
+                            UnevenRoundedRectangle(
+                                topLeadingRadius: isRegular ? 30 : 5,
+                                bottomLeadingRadius: 0,
+                                bottomTrailingRadius: 0,
+                                topTrailingRadius: isRegular ? 30 : 5
+                            )
+                            .fill(bar.studiedCards > 0 ? Color.weeklyCompleted : Color.weeklyMintLight)
+                            .frame(
+                                width: isRegular ? barWidth : 7,
+                                height: barHeight(for: max(bar.studiedCards, 1), maxHeight: chartHeight - 20)
+                            )
                             .frame(maxHeight: .infinity, alignment: .bottom)
 
                             Text(bar.dayLabel)
@@ -70,20 +59,20 @@ struct WeeklyChartView: View {
     }
 
     private func barHeight(for value: Int, maxHeight: CGFloat) -> CGFloat {
-        let ratio = CGFloat(value) / CGFloat(maxTotal)
+        let ratio = CGFloat(value) / CGFloat(maxStudied)
         return max(4, ratio * maxHeight)
     }
 }
 
 #Preview("iPhone") {
     WeeklyChartView(data: [
-        DayBarData(dayLabel: "Mon", totalCards: 43, completedCards: 43, isToday: false),
-        DayBarData(dayLabel: "Tue", totalCards: 18, completedCards: 6, isToday: false),
-        DayBarData(dayLabel: "Wed", totalCards: 21, completedCards: 0, isToday: true),
-        DayBarData(dayLabel: "Thu", totalCards: 21, completedCards: 0, isToday: false),
-        DayBarData(dayLabel: "Fri", totalCards: 11, completedCards: 0, isToday: false),
-        DayBarData(dayLabel: "Sat", totalCards: 52, completedCards: 0, isToday: false),
-        DayBarData(dayLabel: "Sun", totalCards: 24, completedCards: 0, isToday: false),
+        DayBarData(dayLabel: "Mon", studiedCards: 43, isToday: false),
+        DayBarData(dayLabel: "Tue", studiedCards: 6, isToday: false),
+        DayBarData(dayLabel: "Wed", studiedCards: 0, isToday: true),
+        DayBarData(dayLabel: "Thu", studiedCards: 0, isToday: false),
+        DayBarData(dayLabel: "Fri", studiedCards: 0, isToday: false),
+        DayBarData(dayLabel: "Sat", studiedCards: 0, isToday: false),
+        DayBarData(dayLabel: "Sun", studiedCards: 0, isToday: false),
     ])
     .padding()
     .background(Color.appBackground)
@@ -91,13 +80,13 @@ struct WeeklyChartView: View {
 
 #Preview("Mac") {
     WeeklyChartView(data: [
-        DayBarData(dayLabel: "Mon", totalCards: 43, completedCards: 43, isToday: false),
-        DayBarData(dayLabel: "Tue", totalCards: 18, completedCards: 6, isToday: false),
-        DayBarData(dayLabel: "Wed", totalCards: 21, completedCards: 0, isToday: true),
-        DayBarData(dayLabel: "Thu", totalCards: 21, completedCards: 0, isToday: false),
-        DayBarData(dayLabel: "Fri", totalCards: 11, completedCards: 0, isToday: false),
-        DayBarData(dayLabel: "Sat", totalCards: 52, completedCards: 0, isToday: false),
-        DayBarData(dayLabel: "Sun", totalCards: 24, completedCards: 0, isToday: false),
+        DayBarData(dayLabel: "Mon", studiedCards: 43, isToday: false),
+        DayBarData(dayLabel: "Tue", studiedCards: 6, isToday: false),
+        DayBarData(dayLabel: "Wed", studiedCards: 0, isToday: true),
+        DayBarData(dayLabel: "Thu", studiedCards: 0, isToday: false),
+        DayBarData(dayLabel: "Fri", studiedCards: 0, isToday: false),
+        DayBarData(dayLabel: "Sat", studiedCards: 0, isToday: false),
+        DayBarData(dayLabel: "Sun", studiedCards: 0, isToday: false),
     ])
     .padding(64)
     .frame(width: 1440)

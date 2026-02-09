@@ -29,10 +29,10 @@ struct CardRowView: View {
 
             Menu {
                 Button { onEditTap?() } label: {
-                    Label("Edit Card", systemImage: "pencil")
+                    Label(String(localized: "Edit Card", bundle: LanguageManager.shared.bundle), systemImage: "pencil")
                 }
                 Button(role: .destructive) { onDeleteTap?() } label: {
-                    Label("Delete Card", systemImage: "trash")
+                    Label(String(localized: "Delete Card", bundle: LanguageManager.shared.bundle), systemImage: "trash")
                 }
             } label: {
                 Image(systemName: "ellipsis")
@@ -54,7 +54,9 @@ struct CardRowView: View {
             id: UUID(),
             name: "English",
             dueDateText: "Due: 01/28/2026",
-            box: 5
+            box: 5,
+            isNew: false,
+            isDue: false
         ))
     }
     .padding()
@@ -67,7 +69,9 @@ struct CardRowView: View {
             id: UUID(),
             name: "English",
             dueDateText: "Due: 01/28/2026",
-            box: 5
+            box: 5,
+            isNew: false,
+            isDue: false
         ))
     }
     .padding(64)

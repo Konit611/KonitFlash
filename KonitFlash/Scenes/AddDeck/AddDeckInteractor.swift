@@ -1,4 +1,5 @@
 import Foundation
+import SwiftData
 
 struct AddDeckInput {
     let name: String
@@ -13,20 +14,35 @@ struct EditDeckData {
 }
 
 final class AddDeckInteractor {
-    func fetchDeck(deckID: UUID) -> EditDeckData {
-        // TODO: Fetch from DataStore
-        EditDeckData(
-            name: "English Vocabulary",
-            description: "Essential Words for daily conservation",
-            colorTag: .pink
+    private let modelContext: ModelContext
+
+    init(modelContext: ModelContext) {
+        self.modelContext = modelContext
+    }
+
+    func fetchDeck(deckID: UUID) -> EditDeckData? {
+        let descriptor = FetchDescriptor<Deck>(predicate: #Predicate { $0.id == deckID })
+        guard let deck = try? modelContext.fetch(descriptor).first else { return nil }
+        return EditDeckData(
+            name: deck.name,
+            description: deck.deckDescription,
+            colorTag: deck.colorTagEnum
         )
     }
 
     func saveDeck(_ input: AddDeckInput) {
-        // TODO: Persist to DataStore
+        let deck = Deck(name: input.name, deckDescription: input.description, colorTag: input.colorTag)
+        modelContext.insert(deck)
+        try? modelContext.save()
     }
 
     func updateDeck(deckID: UUID, input: AddDeckInput) {
-        // TODO: Update in DataStore
+        let descriptor = FetchDescriptor<Deck>(predicate: #Predicate { $0.id == deckID })
+        guard let deck = try? modelContext.fetch(descriptor).first else { return }
+        deck.name = input.name
+        deck.deckDescription = input.description
+        deck.colorTagEnum = input.colorTag
+        deck.updatedAt = Date()
+        try? modelContext.save()
     }
 }

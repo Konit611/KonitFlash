@@ -1,9 +1,11 @@
 import SwiftUI
+import SwiftData
 
 struct DeckDetailView: View {
-    @StateObject private var presenter: DeckDetailPresenter
+    @StateObject private var presenter = DeckDetailPresenter()
     @Environment(\.dismiss) private var dismiss
     @Environment(\.horizontalSizeClass) private var sizeClass
+    @Environment(\.modelContext) private var modelContext
 
     private let deckID: UUID
     @State private var cardToDelete: CardRowData?
@@ -12,12 +14,12 @@ struct DeckDetailView: View {
 
     private enum DetailNavTarget: Hashable {
         case flashCard
+        case addCard
         case editCard(UUID)
     }
 
     init(deckID: UUID) {
         self.deckID = deckID
-        _presenter = StateObject(wrappedValue: DeckDetailPresenter(deckID: deckID))
     }
 
     var body: some View {
@@ -72,6 +74,7 @@ struct DeckDetailView: View {
         }
         .background(Color.appBackground)
         .navigationBarHidden(true)
+        .onAppear { presenter.configure(modelContext: modelContext, deckID: deckID) }
         .navigationDestination(isPresented: Binding(
             get: { navTarget != nil },
             set: { if !$0 { navTarget = nil } }
@@ -79,6 +82,8 @@ struct DeckDetailView: View {
             switch navTarget {
             case .flashCard:
                 FlashCardView(deckID: deckID)
+            case .addCard:
+                AddCardView(deckID: deckID)
             case .editCard(let cardID):
                 AddCardView(deckID: deckID, editingCardID: cardID)
             case nil:
@@ -93,14 +98,14 @@ struct DeckDetailView: View {
             ),
             titleVisibility: .visible
         ) {
-            Button("Delete", role: .destructive) {
+            Button(String(localized: "Delete", bundle: LanguageManager.shared.bundle), role: .destructive) {
                 if let card = cardToDelete {
                     presenter.deleteCard(id: card.id)
                     cardToDelete = nil
                 }
             }
         } message: {
-            Text("This card will be permanently deleted.")
+            Text("This card will be permanently deleted.", bundle: LanguageManager.shared.bundle)
         }
     }
 
@@ -119,15 +124,32 @@ struct DeckDetailView: View {
     private var cardsSection: some View {
         VStack(spacing: isRegular ? 14 : 10) {
             HStack {
-                Text(isRegular ? "My Flash Decks" : "Cards in Deck")
+                Text(isRegular
+                    ? String(localized: "My Flash Decks", bundle: LanguageManager.shared.bundle)
+                    : String(localized: "Cards in Deck", bundle: LanguageManager.shared.bundle)
+                )
                     .font(.system(size: isRegular ? 32 : 20, weight: .semibold))
                     .foregroundStyle(.white)
                 Spacer()
+
+                NavigationLink(value: NavigationRoute.csvImport(deckID: deckID)) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "doc.text")
+                            .font(.system(size: isRegular ? 14 : 12, weight: .medium))
+                        Text("Import", bundle: LanguageManager.shared.bundle)
+                            .font(.system(size: isRegular ? 16 : 14, weight: .medium))
+                    }
+                    .foregroundStyle(.black)
+                    .padding(.horizontal, isRegular ? 16 : 12)
+                    .padding(.vertical, isRegular ? 10 : 7)
+                    .background(.white.opacity(0.8), in: RoundedRectangle(cornerRadius: isRegular ? 12 : 18))
+                }
+
                 NavigationLink(value: NavigationRoute.addCard(deckID: deckID)) {
                     HStack(spacing: 4) {
                         Image(systemName: "plus")
                             .font(.system(size: isRegular ? 16 : 14, weight: .medium))
-                        Text("Add Card")
+                        Text("Add Card", bundle: LanguageManager.shared.bundle)
                             .font(.system(size: isRegular ? 20 : 16, weight: .semibold))
                     }
                     .foregroundStyle(.black)
@@ -138,12 +160,55 @@ struct DeckDetailView: View {
             }
             .padding(.top, 6)
 
-            ForEach(presenter.viewState.cards) { card in
-                CardRowView(
-                    card: card,
-                    onEditTap: { navTarget = .editCard(card.id) },
-                    onDeleteTap: { cardToDelete = card }
+            if presenter.viewState.isEmpty {
+                EmptyStateView(
+                    icon: "rectangle.on.rectangle",
+                    title: String(localized: "No Cards Yet", bundle: LanguageManager.shared.bundle),
+                    message: String(localized: "Add cards to start studying", bundle: LanguageManager.shared.bundle),
+                    buttonTitle: String(localized: "Add Card", bundle: LanguageManager.shared.bundle),
+                    onButtonTap: { navTarget = .addCard }
                 )
+            } else {
+                // Search bar
+                HStack(spacing: 8) {
+                    Image(systemName: "magnifyingglass")
+                        .font(.system(size: 14))
+                        .foregroundStyle(.white.opacity(0.4))
+                    TextField(String(localized: "Search cards...", bundle: LanguageManager.shared.bundle), text: $presenter.searchText)
+                        .font(.system(size: isRegular ? 16 : 14))
+                        .foregroundStyle(.white)
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 10)
+                .background(.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
+
+                // Filter chips
+                HStack(spacing: 8) {
+                    ForEach(CardFilter.allCases, id: \.self) { filter in
+                        Button {
+                            presenter.selectedFilter = filter
+                        } label: {
+                            Text(filter.rawValue)
+                                .font(.system(size: isRegular ? 14 : 12, weight: .medium))
+                                .foregroundStyle(presenter.selectedFilter == filter ? .black : .white.opacity(0.6))
+                                .padding(.horizontal, isRegular ? 16 : 12)
+                                .padding(.vertical, 6)
+                                .background(
+                                    presenter.selectedFilter == filter ? Color.learnedGreen : .white.opacity(0.08),
+                                    in: RoundedRectangle(cornerRadius: 10)
+                                )
+                        }
+                    }
+                    Spacer()
+                }
+
+                ForEach(presenter.viewState.cards) { card in
+                    CardRowView(
+                        card: card,
+                        onEditTap: { navTarget = .editCard(card.id) },
+                        onDeleteTap: { cardToDelete = card }
+                    )
+                }
             }
         }
     }
@@ -153,6 +218,7 @@ struct DeckDetailView: View {
     NavigationStack {
         DeckDetailView(deckID: UUID())
     }
+    .modelContainer(for: [Deck.self, Card.self, StudyLog.self], inMemory: true)
 }
 
 #Preview("Mac") {
@@ -160,4 +226,5 @@ struct DeckDetailView: View {
         DeckDetailView(deckID: UUID())
     }
     .frame(width: 1440, height: 900)
+    .modelContainer(for: [Deck.self, Card.self, StudyLog.self], inMemory: true)
 }

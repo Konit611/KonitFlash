@@ -10,8 +10,14 @@ import Testing
 
 struct KonitFlashTests {
 
-    @Test func example() async throws {
-        // Write your test here and use APIs like `#expect(...)` to check expected conditions.
+    @Test func colorTagRawValues() {
+        #expect(ColorTag.pink.rawValue == "pink")
+        #expect(ColorTag.green.rawValue == "green")
     }
 
+    @Test func colorTagFromRawValue() {
+        #expect(ColorTag(rawValue: "pink") == .pink)
+        #expect(ColorTag(rawValue: "green") == .green)
+        #expect(ColorTag(rawValue: "invalid") == nil)
+    }
 }

@@ -19,7 +19,7 @@ struct DeckInfoCard: View {
                 HStack(spacing: 6) {
                     Text("🔥")
                         .font(.system(size: isRegular ? 14 : 12))
-                    Text("\(dueTodayCount) due today")
+                    Text("\(dueTodayCount) due today", bundle: LanguageManager.shared.bundle)
                         .font(.system(size: isRegular ? 18 : 14, weight: .bold))
                         .foregroundStyle(.black)
                 }
@@ -45,7 +45,7 @@ struct DeckInfoCard: View {
                         Text(totalCards)
                             .font(.system(size: isRegular ? 24 : 16, weight: .bold))
                             .foregroundStyle(.black)
-                        Text("Total")
+                        Text("Total", bundle: LanguageManager.shared.bundle)
                             .font(.system(size: isRegular ? 16 : 12))
                             .foregroundStyle(Color(hex: 0x555555))
                     }
@@ -80,7 +80,7 @@ struct DeckInfoCard: View {
                     onStartTap?()
                 } label: {
                     VStack(spacing: 6) {
-                        Text("Start")
+                        Text("Start", bundle: LanguageManager.shared.bundle)
                             .font(.system(size: 18, weight: .semibold))
                         Image(systemName: "arrow.right")
                             .font(.system(size: 12, weight: .semibold))
@@ -97,7 +97,7 @@ struct DeckInfoCard: View {
                     onStartTap?()
                 } label: {
                     HStack(spacing: 4) {
-                        Text("Start")
+                        Text("Start", bundle: LanguageManager.shared.bundle)
                             .font(.system(size: 14, weight: .semibold))
                         Image(systemName: "arrow.right")
                             .font(.system(size: 10, weight: .semibold))

@@ -3,6 +3,7 @@ import Foundation
 enum FlashCardPhase {
     case studying
     case result
+    case empty
 }
 
 struct FlashCardViewState {

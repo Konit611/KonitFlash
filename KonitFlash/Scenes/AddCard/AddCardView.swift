@@ -1,14 +1,19 @@
 import SwiftUI
+import SwiftData
 
 struct AddCardView: View {
-    @StateObject private var presenter: AddCardPresenter
+    @StateObject private var presenter = AddCardPresenter()
     @Environment(\.dismiss) private var dismiss
     @Environment(\.horizontalSizeClass) private var sizeClass
+    @Environment(\.modelContext) private var modelContext
 
+    private let deckID: UUID
+    private let editingCardID: UUID?
     private var isRegular: Bool { sizeClass == .regular }
 
     init(deckID: UUID, editingCardID: UUID? = nil) {
-        _presenter = StateObject(wrappedValue: AddCardPresenter(deckID: deckID, editingCardID: editingCardID))
+        self.deckID = deckID
+        self.editingCardID = editingCardID
     }
 
     var body: some View {
@@ -30,6 +35,7 @@ struct AddCardView: View {
         }
         .background(Color.appBackground)
         .navigationBarHidden(true)
+        .onAppear { presenter.configure(modelContext: modelContext, deckID: deckID, editingCardID: editingCardID) }
     }
 
     // MARK: - Header
@@ -46,7 +52,7 @@ struct AddCardView: View {
     private var formCard: some View {
         VStack(alignment: .leading, spacing: 0) {
             FormFieldView(
-                label: "Front",
+                label: String(localized: "Front", bundle: LanguageManager.shared.bundle),
                 text: Binding(
                     get: { presenter.viewState.front },
                     set: { presenter.updateFront($0) }
@@ -60,7 +66,7 @@ struct AddCardView: View {
                 .padding(.bottom, isRegular ? 20 : 16)
 
             FormFieldView(
-                label: "Back",
+                label: String(localized: "Back", bundle: LanguageManager.shared.bundle),
                 text: Binding(
                     get: { presenter.viewState.back },
                     set: { presenter.updateBack($0) }
@@ -95,6 +101,7 @@ struct AddCardView: View {
     NavigationStack {
         AddCardView(deckID: UUID())
     }
+    .modelContainer(for: [Deck.self, Card.self, StudyLog.self], inMemory: true)
 }
 
 #Preview("Mac") {
@@ -102,4 +109,5 @@ struct AddCardView: View {
         AddCardView(deckID: UUID())
     }
     .frame(width: 1440, height: 900)
+    .modelContainer(for: [Deck.self, Card.self, StudyLog.self], inMemory: true)
 }

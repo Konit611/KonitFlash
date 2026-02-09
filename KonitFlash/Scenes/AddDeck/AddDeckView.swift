@@ -1,14 +1,17 @@
 import SwiftUI
+import SwiftData
 
 struct AddDeckView: View {
-    @StateObject private var presenter: AddDeckPresenter
+    @StateObject private var presenter = AddDeckPresenter()
     @Environment(\.dismiss) private var dismiss
     @Environment(\.horizontalSizeClass) private var sizeClass
+    @Environment(\.modelContext) private var modelContext
 
+    private let editingDeckID: UUID?
     private var isRegular: Bool { sizeClass == .regular }
 
     init(editingDeckID: UUID? = nil) {
-        _presenter = StateObject(wrappedValue: AddDeckPresenter(editingDeckID: editingDeckID))
+        self.editingDeckID = editingDeckID
     }
 
     var body: some View {
@@ -26,6 +29,7 @@ struct AddDeckView: View {
         }
         .background(Color.appBackground)
         .navigationBarHidden(true)
+        .onAppear { presenter.configure(modelContext: modelContext, editingDeckID: editingDeckID) }
     }
 
     // MARK: - Header
@@ -42,7 +46,7 @@ struct AddDeckView: View {
     private var formCard: some View {
         VStack(alignment: .leading, spacing: isRegular ? 24 : 18) {
             FormFieldView(
-                label: "Deck Name",
+                label: String(localized: "Deck Name", bundle: LanguageManager.shared.bundle),
                 text: Binding(
                     get: { presenter.viewState.name },
                     set: { presenter.updateName($0) }
@@ -50,7 +54,7 @@ struct AddDeckView: View {
             )
 
             FormFieldView(
-                label: "Description",
+                label: String(localized: "Description", bundle: LanguageManager.shared.bundle),
                 text: Binding(
                     get: { presenter.viewState.description },
                     set: { presenter.updateDescription($0) }
@@ -91,6 +95,7 @@ struct AddDeckView: View {
     NavigationStack {
         AddDeckView()
     }
+    .modelContainer(for: [Deck.self, Card.self, StudyLog.self], inMemory: true)
 }
 
 #Preview("Mac") {
@@ -98,4 +103,5 @@ struct AddDeckView: View {
         AddDeckView()
     }
     .frame(width: 1440, height: 900)
+    .modelContainer(for: [Deck.self, Card.self, StudyLog.self], inMemory: true)
 }

@@ -13,7 +13,7 @@ struct StudyResultCard: View {
 
     var body: some View {
         VStack(spacing: isRegular ? 24 : 16) {
-            Text("Session Complete!")
+            Text("Session Complete!", bundle: LanguageManager.shared.bundle)
                 .font(.system(size: isRegular ? 28 : 24, weight: .bold))
                 .foregroundStyle(.black)
 
@@ -48,10 +48,10 @@ struct StudyResultCard: View {
 
     private var statsGrid: some View {
         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: isRegular ? 16 : 12) {
-            statItem(title: "Total", value: "\(totalCards)", icon: "square.stack.fill")
-            statItem(title: "Time", value: elapsedTime, icon: "clock.fill")
-            statItem(title: "Good + Easy", value: "\(goodEasyCount)", icon: "checkmark.circle.fill")
-            statItem(title: "Again + Hard", value: "\(againHardCount)", icon: "arrow.counterclockwise")
+            statItem(title: String(localized: "Total", bundle: LanguageManager.shared.bundle), value: "\(totalCards)", icon: "square.stack.fill")
+            statItem(title: String(localized: "Time", bundle: LanguageManager.shared.bundle), value: elapsedTime, icon: "clock.fill")
+            statItem(title: String(localized: "Good + Easy", bundle: LanguageManager.shared.bundle), value: "\(goodEasyCount)", icon: "checkmark.circle.fill")
+            statItem(title: String(localized: "Again + Hard", bundle: LanguageManager.shared.bundle), value: "\(againHardCount)", icon: "arrow.counterclockwise")
         }
     }
 

@@ -3,9 +3,11 @@ import SwiftUI
 struct HomeViewState {
     var overdueCount: Int = 0
     var showOverdueBanner: Bool = false
+    var firstOverdueDeckID: UUID?
     var stats: StatsViewData = StatsViewData()
     var weeklyData: [DayBarData] = []
     var decks: [DeckViewData] = []
+    var isEmpty: Bool = true
 }
 
 struct StatsViewData {
@@ -18,10 +20,8 @@ struct StatsViewData {
 struct DayBarData: Identifiable {
     let id = UUID()
     let dayLabel: String
-    let totalCards: Int
-    let completedCards: Int
+    let studiedCards: Int
     let isToday: Bool
-    var completionLabel: String { "\(completedCards)/\(totalCards)" }
 }
 
 struct DeckViewData: Identifiable {

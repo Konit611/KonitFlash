@@ -2,7 +2,6 @@ import Foundation
 
 struct DayActivity {
     let dayLabel: String
-    let totalCards: Int
-    let completedCards: Int
+    let studiedCards: Int
     let isToday: Bool
 }

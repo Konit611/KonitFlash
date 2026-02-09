@@ -12,6 +12,7 @@ struct DeckDetailViewState {
     var learningCount: String = "0"
     var reviewedCount: String = "0"
     var cards: [CardRowData] = []
+    var isEmpty: Bool = true
 }
 
 struct CardRowData: Identifiable {
@@ -19,4 +20,6 @@ struct CardRowData: Identifiable {
     let name: String
     let dueDateText: String
     let box: Int
+    let isNew: Bool
+    let isDue: Bool
 }

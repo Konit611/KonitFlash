@@ -1,17 +1,20 @@
 import Combine
 import Foundation
+import SwiftData
 
 final class AddCardPresenter: ObservableObject {
     @Published var viewState = AddCardViewState()
 
-    private let interactor: AddCardInteractor
-    private let deckID: UUID
-    private let editingCardID: UUID?
+    private var interactor: AddCardInteractor?
+    private var deckID: UUID?
+    private var editingCardID: UUID?
 
-    init(interactor: AddCardInteractor = AddCardInteractor(), deckID: UUID, editingCardID: UUID? = nil) {
-        self.interactor = interactor
+    func configure(modelContext: ModelContext, deckID: UUID, editingCardID: UUID? = nil) {
         self.deckID = deckID
         self.editingCardID = editingCardID
+
+        if interactor != nil { return }
+        self.interactor = AddCardInteractor(modelContext: modelContext)
 
         if let editingCardID {
             loadEditData(cardID: editingCardID)
@@ -21,7 +24,8 @@ final class AddCardPresenter: ObservableObject {
     }
 
     func loadData() {
-        let data = interactor.fetchDeckInfo(deckID: deckID)
+        guard let interactor, let deckID else { return }
+        guard let data = interactor.fetchDeckInfo(deckID: deckID) else { return }
         viewState.deckName = data.deckName
     }
 
@@ -36,6 +40,7 @@ final class AddCardPresenter: ObservableObject {
     }
 
     func saveCard() {
+        guard let interactor, let deckID else { return }
         let input = AddCardInput(
             deckID: deckID,
             front: viewState.front.trimmingCharacters(in: .whitespaces),
@@ -56,7 +61,8 @@ final class AddCardPresenter: ObservableObject {
     }
 
     private func loadEditData(cardID: UUID) {
-        let data = interactor.fetchCard(deckID: deckID, cardID: cardID)
+        guard let interactor, let deckID else { return }
+        guard let data = interactor.fetchCard(deckID: deckID, cardID: cardID) else { return }
         viewState.isEditMode = true
         viewState.deckName = data.deckName
         viewState.front = data.front

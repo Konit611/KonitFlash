@@ -8,4 +8,5 @@ enum NavigationRoute: Hashable {
     case editCard(deckID: UUID, cardID: UUID)
     case flashCard(deckID: UUID)
     case settings
+    case csvImport(deckID: UUID)
 }

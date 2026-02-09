@@ -10,11 +10,11 @@ struct DeckStatsSection: View {
 
     var body: some View {
         HStack(spacing: isRegular ? 8 : 0) {
-            statCard(value: newCount, label: "NEW", color: .streakPink)
+            statCard(value: newCount, label: String(localized: "NEW", bundle: LanguageManager.shared.bundle), color: .streakPink)
             if !isRegular { dotSeparator }
-            statCard(value: learningCount, label: "LEARNING", color: .learnedGreen)
+            statCard(value: learningCount, label: String(localized: "LEARNING", bundle: LanguageManager.shared.bundle), color: .learnedGreen)
             if !isRegular { dotSeparator }
-            statCard(value: reviewedCount, label: "REVIEWED", color: .weeklyMint)
+            statCard(value: reviewedCount, label: String(localized: "REVIEWED", bundle: LanguageManager.shared.bundle), color: .weeklyMint)
         }
     }
 

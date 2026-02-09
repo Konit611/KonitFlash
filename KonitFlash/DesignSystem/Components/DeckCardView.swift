@@ -15,10 +15,10 @@ struct DeckCardView: View {
                 Spacer()
                 Menu {
                     Button { onEditTap?() } label: {
-                        Label("Edit Deck", systemImage: "pencil")
+                        Label(String(localized: "Edit Deck", bundle: LanguageManager.shared.bundle), systemImage: "pencil")
                     }
                     Button(role: .destructive) { onDeleteTap?() } label: {
-                        Label("Delete Deck", systemImage: "trash")
+                        Label(String(localized: "Delete Deck", bundle: LanguageManager.shared.bundle), systemImage: "trash")
                     }
                 } label: {
                     Image(systemName: "ellipsis")
@@ -40,7 +40,7 @@ struct DeckCardView: View {
                     Text(deck.totalCards)
                         .font(.system(size: 16, weight: .bold))
                         .foregroundStyle(.black)
-                    Text("Total")
+                    Text("Total", bundle: LanguageManager.shared.bundle)
                         .font(.system(size: 12))
                         .foregroundStyle(Color(hex: 0x555555))
                 }
@@ -76,7 +76,7 @@ struct DeckCardView: View {
                     Text("\(deck.dueCards)")
                         .font(.system(size: 15, weight: .bold))
                         .foregroundStyle(.white)
-                    Text("cards")
+                    Text("cards", bundle: LanguageManager.shared.bundle)
                         .font(.system(size: 11))
                         .foregroundStyle(Color(hex: 0xC7C7C7))
                 }
@@ -93,7 +93,7 @@ struct DeckCardView: View {
                     Text("\(deck.estimatedMinutes)")
                         .font(.system(size: 15, weight: .bold))
                         .foregroundStyle(.white)
-                    Text("min")
+                    Text("min", bundle: LanguageManager.shared.bundle)
                         .font(.system(size: 11))
                         .foregroundStyle(Color(hex: 0xC7C7C7))
                 }
@@ -104,7 +104,7 @@ struct DeckCardView: View {
                     onStartTap?()
                 } label: {
                     HStack(spacing: 4) {
-                        Text("Start")
+                        Text("Start", bundle: LanguageManager.shared.bundle)
                             .font(.system(size: 15, weight: .semibold))
                         Image(systemName: "arrow.right")
                             .font(.system(size: 11, weight: .semibold))

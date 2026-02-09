@@ -1,4 +1,5 @@
 import Foundation
+import SwiftData
 
 struct DeckDetailData {
     let deck: Deck
@@ -10,39 +11,38 @@ struct DeckDetailData {
 }
 
 final class DeckDetailInteractor {
-    func fetchDeckDetail(deckID: UUID) -> DeckDetailData {
-        let deck = Deck(
-            id: deckID,
-            name: "English Vocabulary",
-            description: "Essential Words for daily conservation",
-            progress: 0.6,
-            totalCards: 126,
-            dueCards: 17,
-            estimatedMinutes: 5,
-            colorTag: .pink
-        )
+    private let modelContext: ModelContext
 
-        let baseDate = Calendar.current.date(from: DateComponents(year: 2026, month: 1, day: 28))!
+    init(modelContext: ModelContext) {
+        self.modelContext = modelContext
+    }
 
-        let sampleCards = [
-            ("Abandon", "포기하다, 버리다"),
-            ("Benefit", "이익, 혜택"),
-            ("Curious", "궁금한, 호기심 많은"),
-            ("Diligent", "근면한, 성실한"),
-            ("Elaborate", "정교한, 상세한"),
-        ]
+    func fetchDeckDetail(deckID: UUID) -> DeckDetailData? {
+        let descriptor = FetchDescriptor<Deck>(predicate: #Predicate { $0.id == deckID })
+        guard let deck = try? modelContext.fetch(descriptor).first else { return nil }
 
-        let cards = sampleCards.map { front, back in
-            Card(front: front, back: back, dueDate: baseDate, box: 5)
-        }
+        let cards = (deck.cards ?? []).sorted { $0.createdAt < $1.createdAt }
+        let now = Date()
+
+        let newCount = cards.filter { $0.repetitions == 0 }.count
+        let learningCount = cards.filter { $0.repetitions > 0 && $0.dueDate <= now }.count
+        let reviewedCount = cards.filter { $0.repetitions > 0 && $0.dueDate > now }.count
+        let dueTodayCount = cards.filter { $0.dueDate <= now }.count
 
         return DeckDetailData(
             deck: deck,
-            newCount: 6,
-            learningCount: 12,
-            reviewedCount: 121,
-            dueTodayCount: 12,
+            newCount: newCount,
+            learningCount: learningCount,
+            reviewedCount: reviewedCount,
+            dueTodayCount: dueTodayCount,
             cards: cards
         )
+    }
+
+    func deleteCard(id: UUID) {
+        let descriptor = FetchDescriptor<Card>(predicate: #Predicate { $0.id == id })
+        guard let card = try? modelContext.fetch(descriptor).first else { return }
+        modelContext.delete(card)
+        try? modelContext.save()
     }
 }

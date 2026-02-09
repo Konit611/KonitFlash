@@ -1,4 +1,5 @@
 import Foundation
+import SwiftData
 
 struct StudySession {
     let deckName: String
@@ -6,38 +7,64 @@ struct StudySession {
 }
 
 final class FlashCardInteractor {
+    private let modelContext: ModelContext
     private var answers: [(card: Card, grade: AnswerGrade)] = []
     private var startDate = Date()
+
+    init(modelContext: ModelContext) {
+        self.modelContext = modelContext
+    }
 
     func fetchStudySession(deckID: UUID) -> StudySession {
         startDate = Date()
         answers = []
 
-        let baseDate = Calendar.current.date(from: DateComponents(year: 2026, month: 1, day: 28))!
+        let deckDescriptor = FetchDescriptor<Deck>(predicate: #Predicate { $0.id == deckID })
+        guard let deck = try? modelContext.fetch(deckDescriptor).first else {
+            return StudySession(deckName: "", cards: [])
+        }
 
-        let sampleCards = [
-            Card(front: "Abandon", back: "포기하다, 버리다", dueDate: baseDate, box: 1),
-            Card(front: "Benefit", back: "이익, 혜택", dueDate: baseDate, box: 2),
-            Card(front: "Curious", back: "궁금한, 호기심 많은", dueDate: baseDate, box: 3),
-            Card(front: "Diligent", back: "근면한, 성실한", dueDate: baseDate, box: 1),
-            Card(front: "Elaborate", back: "정교한, 상세한", dueDate: baseDate, box: 4),
-        ]
+        let now = Date()
+        let dueCards = (deck.cards ?? [])
+            .filter { $0.dueDate <= now }
+            .sorted { $0.dueDate < $1.dueDate }
+            .prefix(20)
 
-        return StudySession(deckName: "English Vocabulary", cards: sampleCards)
+        return StudySession(deckName: deck.name, cards: Array(dueCards))
     }
 
     func computeIntervals(for card: Card) -> [AnswerGrade: String] {
-        let box = card.box
-        return [
-            .again: "<1 min",
-            .hard: box <= 1 ? "1 min" : "\(box) min",
-            .good: box <= 1 ? "1 day" : "\(box) days",
-            .easy: box <= 1 ? "4 days" : "\(box * 2) days"
-        ]
+        SRSEngine.previewIntervals(
+            currentInterval: card.interval,
+            currentEF: card.easeFactor,
+            currentRepetitions: card.repetitions,
+            currentBox: card.box
+        )
     }
 
     func recordAnswer(card: Card, grade: AnswerGrade) {
         answers.append((card: card, grade: grade))
+
+        let result = SRSEngine.compute(
+            grade: grade,
+            currentInterval: card.interval,
+            currentEF: card.easeFactor,
+            currentRepetitions: card.repetitions,
+            currentBox: card.box
+        )
+
+        card.interval = result.interval
+        card.easeFactor = result.easeFactor
+        card.repetitions = result.repetitions
+        card.dueDate = result.dueDate
+        card.box = result.box
+        card.updatedAt = Date()
+
+        let elapsed = Date().timeIntervalSince(startDate) / Double(max(1, answers.count))
+        let log = StudyLog(card: card, grade: gradeToInt(grade), elapsedSeconds: elapsed)
+        modelContext.insert(log)
+
+        try? modelContext.save()
     }
 
     func computeStudyResult() -> StudyResult {
@@ -57,5 +84,16 @@ final class FlashCardInteractor {
             easyCount: easyCount,
             elapsedSeconds: elapsed
         )
+    }
+
+    // MARK: - Private
+
+    private func gradeToInt(_ grade: AnswerGrade) -> Int {
+        switch grade {
+        case .again: return 0
+        case .hard: return 1
+        case .good: return 2
+        case .easy: return 3
+        }
     }
 }

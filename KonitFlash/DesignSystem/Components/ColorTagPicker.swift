@@ -12,7 +12,7 @@ struct ColorTagPicker: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: isRegular ? 10 : 8) {
-            Text("Color")
+            Text("Color", bundle: LanguageManager.shared.bundle)
                 .font(.system(size: isRegular ? 20 : 16, weight: .semibold))
                 .foregroundStyle(Color(hex: 0x555555))
 

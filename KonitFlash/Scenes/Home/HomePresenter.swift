@@ -1,40 +1,77 @@
 import Combine
 import SwiftUI
+import SwiftData
 
 final class HomePresenter: ObservableObject {
     @Published var viewState = HomeViewState()
+    @Published var searchText: String = ""
 
-    private let interactor: HomeInteractor
+    private var interactor: HomeInteractor?
+    private var allDecks: [DeckViewData] = []
     private var cancellables = Set<AnyCancellable>()
 
-    init(interactor: HomeInteractor = HomeInteractor()) {
-        self.interactor = interactor
-        loadData()
+    func configure(modelContext: ModelContext) {
+        if interactor != nil {
+            loadData()
+            return
+        }
+        self.interactor = HomeInteractor(modelContext: modelContext)
 
         LanguageManager.shared.$locale
             .dropFirst()
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in self?.loadData() }
             .store(in: &cancellables)
+
+        $searchText
+            .dropFirst()
+            .debounce(for: .milliseconds(200), scheduler: RunLoop.main)
+            .sink { [weak self] _ in self?.applySearch() }
+            .store(in: &cancellables)
+
+        loadData()
     }
 
     func loadData() {
+        guard let interactor else { return }
         let data = interactor.fetchHomeData()
+
+        allDecks = mapDecks(data.decks)
 
         viewState = HomeViewState(
             overdueCount: data.stats.overdueCount,
             showOverdueBanner: data.stats.overdueCount > 0,
+            firstOverdueDeckID: findFirstOverdueDeckID(decks: data.decks),
             stats: mapStats(data.stats),
             weeklyData: mapWeeklyData(data.weeklyActivities),
-            decks: mapDecks(data.decks)
+            decks: filteredDecks(),
+            isEmpty: data.decks.isEmpty
         )
     }
 
+    func applySearch() {
+        viewState.decks = filteredDecks()
+    }
+
+    private func filteredDecks() -> [DeckViewData] {
+        let query = searchText.trimmingCharacters(in: .whitespaces).lowercased()
+        guard !query.isEmpty else { return allDecks }
+        return allDecks.filter { $0.name.lowercased().contains(query) }
+    }
+
     func deleteDeck(id: UUID) {
-        viewState.decks.removeAll { $0.id == id }
+        interactor?.deleteDeck(id: id)
+        loadData()
     }
 
     // MARK: - Mapping
+
+    private func findFirstOverdueDeckID(decks: [Deck]) -> UUID? {
+        let now = Date()
+        return decks.first { deck in
+            (deck.cards ?? []).contains { $0.dueDate < now }
+        }?.id
+    }
 
     private func mapStats(_ stats: HomeStats) -> StatsViewData {
         StatsViewData(
@@ -60,8 +97,7 @@ final class HomePresenter: ObservableObject {
         activities.map { activity in
             DayBarData(
                 dayLabel: activity.dayLabel,
-                totalCards: activity.totalCards,
-                completedCards: activity.completedCards,
+                studiedCards: activity.studiedCards,
                 isToday: activity.isToday
             )
         }
@@ -72,13 +108,13 @@ final class HomePresenter: ObservableObject {
             DeckViewData(
                 id: deck.id,
                 name: deck.name,
-                description: deck.description,
+                description: deck.deckDescription,
                 progress: deck.progress,
                 progressPercent: "\(Int(deck.progress * 100))%",
                 totalCards: "\(deck.totalCards)",
                 dueCards: deck.dueCards,
                 estimatedMinutes: deck.estimatedMinutes,
-                progressColor: colorForTag(deck.colorTag)
+                progressColor: colorForTag(deck.colorTagEnum)
             )
         }
     }

@@ -1,14 +1,17 @@
 import SwiftUI
+import SwiftData
 
 struct FlashCardView: View {
-    @StateObject private var presenter: FlashCardPresenter
+    @StateObject private var presenter = FlashCardPresenter()
     @Environment(\.dismiss) private var dismiss
     @Environment(\.horizontalSizeClass) private var sizeClass
+    @Environment(\.modelContext) private var modelContext
 
+    private let deckID: UUID
     private var isRegular: Bool { sizeClass == .regular }
 
     init(deckID: UUID) {
-        _presenter = StateObject(wrappedValue: FlashCardPresenter(deckID: deckID))
+        self.deckID = deckID
     }
 
     var body: some View {
@@ -23,10 +26,50 @@ struct FlashCardView: View {
                 studyingContent
             case .result:
                 resultContent
+            case .empty:
+                emptyContent
             }
         }
         .background(Color.appBackground)
         .navigationBarHidden(true)
+        .onAppear { presenter.configure(modelContext: modelContext, deckID: deckID) }
+        #if os(macOS)
+        .onKeyPress(.space) {
+            if presenter.viewState.phase == .studying && !presenter.viewState.isFlipped {
+                presenter.flipCard()
+                return .handled
+            }
+            return .ignored
+        }
+        .onKeyPress(characters: .init(["1"])) {
+            if presenter.viewState.phase == .studying && presenter.viewState.isFlipped {
+                presenter.answerCard(grade: .again)
+                return .handled
+            }
+            return .ignored
+        }
+        .onKeyPress(characters: .init(["2"])) {
+            if presenter.viewState.phase == .studying && presenter.viewState.isFlipped {
+                presenter.answerCard(grade: .hard)
+                return .handled
+            }
+            return .ignored
+        }
+        .onKeyPress(characters: .init(["3"])) {
+            if presenter.viewState.phase == .studying && presenter.viewState.isFlipped {
+                presenter.answerCard(grade: .good)
+                return .handled
+            }
+            return .ignored
+        }
+        .onKeyPress(characters: .init(["4"])) {
+            if presenter.viewState.phase == .studying && presenter.viewState.isFlipped {
+                presenter.answerCard(grade: .easy)
+                return .handled
+            }
+            return .ignored
+        }
+        #endif
     }
 
     // MARK: - Header
@@ -90,7 +133,7 @@ struct FlashCardView: View {
                     Button {
                         dismiss()
                     } label: {
-                        Text("Back to Deck")
+                        Text("Back to Deck", bundle: LanguageManager.shared.bundle)
                             .font(.system(size: isRegular ? 18 : 15, weight: .bold))
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
@@ -101,7 +144,7 @@ struct FlashCardView: View {
                     Button {
                         presenter.restartSession()
                     } label: {
-                        Text("Study Again")
+                        Text("Study Again", bundle: LanguageManager.shared.bundle)
                             .font(.system(size: isRegular ? 18 : 15, weight: .bold))
                             .foregroundStyle(.black)
                             .frame(maxWidth: .infinity)
@@ -114,12 +157,28 @@ struct FlashCardView: View {
             .padding(.top, isRegular ? 20 : 10)
         }
     }
+
+    // MARK: - Empty
+
+    private var emptyContent: some View {
+        VStack {
+            Spacer()
+            EmptyStateView(
+                icon: "checkmark.circle",
+                title: String(localized: "All Caught Up!", bundle: LanguageManager.shared.bundle),
+                message: String(localized: "You've completed all reviews for today", bundle: LanguageManager.shared.bundle)
+            )
+            Spacer()
+        }
+        .padding(.horizontal, isRegular ? 40 : 15)
+    }
 }
 
 #Preview("iPhone") {
     NavigationStack {
         FlashCardView(deckID: UUID())
     }
+    .modelContainer(for: [Deck.self, Card.self, StudyLog.self], inMemory: true)
 }
 
 #Preview("Mac") {
@@ -127,4 +186,5 @@ struct FlashCardView: View {
         FlashCardView(deckID: UUID())
     }
     .frame(width: 1440, height: 900)
+    .modelContainer(for: [Deck.self, Card.self, StudyLog.self], inMemory: true)
 }

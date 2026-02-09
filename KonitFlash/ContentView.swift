@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
     @State private var path = NavigationPath()
@@ -22,6 +23,8 @@ struct ContentView: View {
                         FlashCardView(deckID: id)
                     case .settings:
                         SettingsView()
+                    case .csvImport(let deckID):
+                        CSVImportView(deckID: deckID)
                     }
                 }
         }
@@ -30,4 +33,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .modelContainer(for: [Deck.self, Card.self, StudyLog.self], inMemory: true)
 }

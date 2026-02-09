@@ -38,7 +38,7 @@ struct StatsSectionView: View {
             Text(stats.streakText)
                 .font(.system(size: isRegular ? 48 : 36, weight: .bold))
                 .foregroundStyle(.black)
-            Text("STREAK")
+            Text("STREAK", bundle: LanguageManager.shared.bundle)
                 .font(.system(size: isRegular ? 16 : 14, weight: .bold))
                 .foregroundStyle(Color(hex: 0x7C6172))
                 .tracking(1)
@@ -60,7 +60,7 @@ struct StatsSectionView: View {
 
     private var learnedReviewsCard: some View {
         VStack(alignment: .leading, spacing: isRegular ? 14 : 10) {
-            Text("Let's crush more cards.")
+            Text("Let's crush more cards.", bundle: LanguageManager.shared.bundle)
                 .font(.system(size: isRegular ? 16 : 14, weight: .bold))
                 .foregroundStyle(.black)
 
@@ -74,7 +74,7 @@ struct StatsSectionView: View {
                         .foregroundStyle(.black)
                         .minimumScaleFactor(0.5)
                         .lineLimit(1)
-                    Text("LEARNED")
+                    Text("LEARNED", bundle: LanguageManager.shared.bundle)
                         .font(.system(size: isRegular ? 14 : 12, weight: .bold))
                         .foregroundStyle(Color(hex: 0x7C6172))
                         .tracking(1)
@@ -92,7 +92,7 @@ struct StatsSectionView: View {
                         .foregroundStyle(.black)
                         .minimumScaleFactor(0.5)
                         .lineLimit(1)
-                    Text("REVIEWS")
+                    Text("REVIEWS", bundle: LanguageManager.shared.bundle)
                         .font(.system(size: isRegular ? 14 : 12, weight: .bold))
                         .foregroundStyle(Color(hex: 0x7C6172))
                         .tracking(1)

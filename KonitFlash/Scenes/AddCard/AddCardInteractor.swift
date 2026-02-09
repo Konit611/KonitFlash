@@ -1,4 +1,5 @@
 import Foundation
+import SwiftData
 
 struct AddCardInput {
     let deckID: UUID
@@ -17,25 +18,44 @@ struct EditCardData {
 }
 
 final class AddCardInteractor {
-    func fetchDeckInfo(deckID: UUID) -> AddCardData {
-        // TODO: Fetch from DataStore
-        AddCardData(deckName: "English Vocabulary")
+    private let modelContext: ModelContext
+
+    init(modelContext: ModelContext) {
+        self.modelContext = modelContext
     }
 
-    func fetchCard(deckID: UUID, cardID: UUID) -> EditCardData {
-        // TODO: Fetch from DataStore
-        EditCardData(
-            deckName: "English Vocabulary",
-            front: "Abandon",
-            back: "포기하다, 버리다"
-        )
+    func fetchDeckInfo(deckID: UUID) -> AddCardData? {
+        let descriptor = FetchDescriptor<Deck>(predicate: #Predicate { $0.id == deckID })
+        guard let deck = try? modelContext.fetch(descriptor).first else { return nil }
+        return AddCardData(deckName: deck.name)
+    }
+
+    func fetchCard(deckID: UUID, cardID: UUID) -> EditCardData? {
+        let deckDescriptor = FetchDescriptor<Deck>(predicate: #Predicate { $0.id == deckID })
+        guard let deck = try? modelContext.fetch(deckDescriptor).first else { return nil }
+
+        let cardDescriptor = FetchDescriptor<Card>(predicate: #Predicate { $0.id == cardID })
+        guard let card = try? modelContext.fetch(cardDescriptor).first else { return nil }
+
+        return EditCardData(deckName: deck.name, front: card.front, back: card.back)
     }
 
     func saveCard(_ input: AddCardInput) {
-        // TODO: Persist to DataStore
+        let targetDeckID = input.deckID
+        let deckDescriptor = FetchDescriptor<Deck>(predicate: #Predicate { $0.id == targetDeckID })
+        guard let deck = try? modelContext.fetch(deckDescriptor).first else { return }
+
+        let card = Card(front: input.front, back: input.back, deck: deck)
+        modelContext.insert(card)
+        try? modelContext.save()
     }
 
     func updateCard(cardID: UUID, input: AddCardInput) {
-        // TODO: Update in DataStore
+        let descriptor = FetchDescriptor<Card>(predicate: #Predicate { $0.id == cardID })
+        guard let card = try? modelContext.fetch(descriptor).first else { return }
+        card.front = input.front
+        card.back = input.back
+        card.updatedAt = Date()
+        try? modelContext.save()
     }
 }

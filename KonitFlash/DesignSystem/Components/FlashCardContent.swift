@@ -42,7 +42,7 @@ struct FlashCardContent: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, isRegular ? 40 : 24)
             if !isFlipped && isFront {
-                Text("Tap to flip")
+                Text("Tap to flip", bundle: LanguageManager.shared.bundle)
                     .font(.system(size: isRegular ? 16 : 13))
                     .foregroundStyle(Color(hex: 0x9095A1))
             }
