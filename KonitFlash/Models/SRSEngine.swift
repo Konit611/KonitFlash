@@ -92,7 +92,8 @@ enum SRSEngine {
         currentInterval: Double,
         currentEF: Double,
         currentRepetitions: Int,
-        currentBox: Int
+        currentBox: Int,
+        bundle: Bundle = .main
     ) -> [AnswerGrade: String] {
         var results: [AnswerGrade: String] = [:]
         for grade in AnswerGrade.allCases {
@@ -103,23 +104,24 @@ enum SRSEngine {
                 currentRepetitions: currentRepetitions,
                 currentBox: currentBox
             )
-            results[grade] = formatInterval(result.interval)
+            results[grade] = formatInterval(result.interval, bundle: bundle)
         }
         return results
     }
 
-    static func formatInterval(_ days: Double) -> String {
+    static func formatInterval(_ days: Double, bundle: Bundle = .main) -> String {
         let minutes = days * 24 * 60
         if minutes < 1 {
-            return "<1 min"
+            return String(localized: "<1 min", bundle: bundle)
         } else if minutes < 60 {
-            return "\(Int(minutes)) min"
+            let m = Int(minutes)
+            return String(localized: "\(m) min", bundle: bundle)
         } else if days < 1 {
-            let hours = Int(days * 24)
-            return hours == 1 ? "1 hr" : "\(hours) hrs"
+            let h = Int(days * 24)
+            return String(localized: "\(h) hr", bundle: bundle)
         } else {
             let d = Int(round(days))
-            return d == 1 ? "1 day" : "\(d) days"
+            return String(localized: "\(d) day", bundle: bundle)
         }
     }
 }

@@ -41,7 +41,7 @@ final class HomePresenter: ObservableObject {
         viewState = HomeViewState(
             overdueCount: data.stats.overdueCount,
             showOverdueBanner: data.stats.overdueCount > 0,
-            firstOverdueDeckID: findFirstOverdueDeckID(decks: data.decks),
+            firstOverdueDeckID: data.firstOverdueDeckID,
             stats: mapStats(data.stats),
             weeklyData: mapWeeklyData(data.weeklyActivities),
             decks: filteredDecks(),
@@ -65,13 +65,6 @@ final class HomePresenter: ObservableObject {
     }
 
     // MARK: - Mapping
-
-    private func findFirstOverdueDeckID(decks: [Deck]) -> UUID? {
-        let now = Date()
-        return decks.first { deck in
-            (deck.cards ?? []).contains { $0.dueDate < now }
-        }?.id
-    }
 
     private func mapStats(_ stats: HomeStats) -> StatsViewData {
         StatsViewData(

@@ -87,10 +87,12 @@ enum CSVParser {
                             current = ""
                             inQuotes = false
                         } else {
-                            current.append(next)
+                            // Closing quote followed by non-delimiter: end quoted section
                             inQuotes = false
+                            current.append(next)
                         }
                     } else {
+                        // Closing quote at end of line
                         inQuotes = false
                     }
                 } else {

@@ -10,6 +10,7 @@ final class FlashCardInteractor {
     private let modelContext: ModelContext
     private var answers: [(card: Card, grade: AnswerGrade)] = []
     private var startDate = Date()
+    private var lastAnswerTime = Date()
 
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
@@ -17,6 +18,7 @@ final class FlashCardInteractor {
 
     func fetchStudySession(deckID: UUID) -> StudySession {
         startDate = Date()
+        lastAnswerTime = startDate
         answers = []
 
         let deckDescriptor = FetchDescriptor<Deck>(predicate: #Predicate { $0.id == deckID })
@@ -33,12 +35,13 @@ final class FlashCardInteractor {
         return StudySession(deckName: deck.name, cards: Array(dueCards))
     }
 
-    func computeIntervals(for card: Card) -> [AnswerGrade: String] {
+    func computeIntervals(for card: Card, bundle: Bundle = .main) -> [AnswerGrade: String] {
         SRSEngine.previewIntervals(
             currentInterval: card.interval,
             currentEF: card.easeFactor,
             currentRepetitions: card.repetitions,
-            currentBox: card.box
+            currentBox: card.box,
+            bundle: bundle
         )
     }
 
@@ -60,15 +63,21 @@ final class FlashCardInteractor {
         card.box = result.box
         card.updatedAt = Date()
 
-        let elapsed = Date().timeIntervalSince(startDate) / Double(max(1, answers.count))
+        let now = Date()
+        let elapsed = now.timeIntervalSince(lastAnswerTime)
+        lastAnswerTime = now
         let log = StudyLog(card: card, grade: gradeToInt(grade), elapsedSeconds: elapsed)
         modelContext.insert(log)
 
-        try? modelContext.save()
+        do {
+            try modelContext.save()
+        } catch {
+            print("[KonitFlash] Failed to save answer: \(error)")
+        }
     }
 
     func computeStudyResult() -> StudyResult {
-        let elapsed = Int(Date().timeIntervalSince(startDate))
+        let elapsed = Date().timeIntervalSince(startDate)
         let againCount = answers.filter { $0.grade == .again }.count
         let hardCount = answers.filter { $0.grade == .hard }.count
         let goodCount = answers.filter { $0.grade == .good }.count

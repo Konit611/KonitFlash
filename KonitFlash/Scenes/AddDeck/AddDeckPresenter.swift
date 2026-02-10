@@ -11,7 +11,10 @@ final class AddDeckPresenter: ObservableObject {
     func configure(modelContext: ModelContext, editingDeckID: UUID? = nil) {
         self.editingDeckID = editingDeckID
 
-        if interactor != nil { return }
+        if interactor != nil {
+            if let editingDeckID { loadEditData(deckID: editingDeckID) }
+            return
+        }
         self.interactor = AddDeckInteractor(modelContext: modelContext)
 
         if let editingDeckID {

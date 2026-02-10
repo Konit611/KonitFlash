@@ -13,7 +13,10 @@ final class CSVImportPresenter: ObservableObject {
     func configure(modelContext: ModelContext, deckID: UUID) {
         self.deckID = deckID
 
-        if interactor != nil { return }
+        if interactor != nil {
+            viewState.deckName = interactor?.fetchDeckName(deckID: deckID) ?? ""
+            return
+        }
         self.interactor = CSVImportInteractor(modelContext: modelContext)
 
         viewState.deckName = interactor?.fetchDeckName(deckID: deckID) ?? ""
@@ -26,7 +29,8 @@ final class CSVImportPresenter: ObservableObject {
 
         if result.cards.isEmpty {
             viewState.phase = .error
-            viewState.errorMessage = result.errors.first ?? "No valid cards found in file"
+            let bundle = LanguageManager.shared.bundle
+            viewState.errorMessage = result.errors.first ?? String(localized: "No valid cards found in file", bundle: bundle)
             viewState.errors = result.errors
             return
         }
@@ -47,15 +51,18 @@ final class CSVImportPresenter: ObservableObject {
 
         viewState.phase = .importing
 
-        let imported = interactor.importCards(into: deckID, cards: parsedCards, skipDuplicates: duplicates)
-
-        viewState.importedCount = imported
-        viewState.phase = .done
+        let cards = parsedCards
+        let dupes = duplicates
+        Task { @MainActor in
+            let imported = interactor.importCards(into: deckID, cards: cards, skipDuplicates: dupes)
+            viewState.importedCount = imported
+            viewState.phase = .done
+        }
     }
 
     func handleFileError() {
         viewState.phase = .error
-        viewState.errorMessage = "Failed to access the selected file"
+        viewState.errorMessage = String(localized: "Failed to access the selected file", bundle: LanguageManager.shared.bundle)
     }
 
     func resetToFileSelect() {

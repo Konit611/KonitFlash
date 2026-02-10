@@ -7,6 +7,16 @@ enum CardFilter: String, CaseIterable {
     case due = "Due"
     case newCards = "New"
     case learned = "Learned"
+
+    var localizedLabel: String {
+        let bundle = LanguageManager.shared.bundle
+        switch self {
+        case .all: return String(localized: "All", bundle: bundle)
+        case .due: return String(localized: "Due", bundle: bundle)
+        case .newCards: return String(localized: "New", bundle: bundle)
+        case .learned: return String(localized: "Learned", bundle: bundle)
+        }
+    }
 }
 
 final class DeckDetailPresenter: ObservableObject {

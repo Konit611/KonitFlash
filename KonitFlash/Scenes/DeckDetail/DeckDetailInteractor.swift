@@ -43,6 +43,10 @@ final class DeckDetailInteractor {
         let descriptor = FetchDescriptor<Card>(predicate: #Predicate { $0.id == id })
         guard let card = try? modelContext.fetch(descriptor).first else { return }
         modelContext.delete(card)
-        try? modelContext.save()
+        do {
+            try modelContext.save()
+        } catch {
+            print("[KonitFlash] Failed to delete card: \(error)")
+        }
     }
 }

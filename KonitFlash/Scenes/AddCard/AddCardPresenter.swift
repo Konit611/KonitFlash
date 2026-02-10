@@ -13,7 +13,14 @@ final class AddCardPresenter: ObservableObject {
         self.deckID = deckID
         self.editingCardID = editingCardID
 
-        if interactor != nil { return }
+        if interactor != nil {
+            if let editingCardID {
+                loadEditData(cardID: editingCardID)
+            } else {
+                loadData()
+            }
+            return
+        }
         self.interactor = AddCardInteractor(modelContext: modelContext)
 
         if let editingCardID {

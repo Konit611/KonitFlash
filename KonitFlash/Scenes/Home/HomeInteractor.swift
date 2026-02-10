@@ -5,6 +5,7 @@ struct HomeData {
     let stats: HomeStats
     let weeklyActivities: [DayActivity]
     let decks: [Deck]
+    let firstOverdueDeckID: UUID?
 }
 
 final class HomeInteractor {
@@ -19,14 +20,19 @@ final class HomeInteractor {
         let allLogs = fetchAllLogs()
         let stats = computeStats(decks: decks, allLogs: allLogs)
         let weeklyActivities = computeWeeklyActivity(allLogs: allLogs)
-        return HomeData(stats: stats, weeklyActivities: weeklyActivities, decks: decks)
+        let firstOverdueDeckID = findFirstOverdueDeckID(decks: decks)
+        return HomeData(stats: stats, weeklyActivities: weeklyActivities, decks: decks, firstOverdueDeckID: firstOverdueDeckID)
     }
 
     func deleteDeck(id: UUID) {
         let descriptor = FetchDescriptor<Deck>(predicate: #Predicate { $0.id == id })
         guard let deck = try? modelContext.fetch(descriptor).first else { return }
         modelContext.delete(deck)
-        try? modelContext.save()
+        do {
+            try modelContext.save()
+        } catch {
+            print("[KonitFlash] Failed to delete deck: \(error)")
+        }
     }
 
     // MARK: - Private
@@ -68,7 +74,8 @@ final class HomeInteractor {
         var checkDate = calendar.startOfDay(for: Date())
 
         if !studyDates.contains(checkDate) {
-            checkDate = calendar.date(byAdding: .day, value: -1, to: checkDate)!
+            guard let previous = calendar.date(byAdding: .day, value: -1, to: checkDate) else { return 0 }
+            checkDate = previous
             if !studyDates.contains(checkDate) {
                 return 0
             }
@@ -76,10 +83,18 @@ final class HomeInteractor {
 
         while studyDates.contains(checkDate) {
             streak += 1
-            checkDate = calendar.date(byAdding: .day, value: -1, to: checkDate)!
+            guard let previous = calendar.date(byAdding: .day, value: -1, to: checkDate) else { break }
+            checkDate = previous
         }
 
         return streak
+    }
+
+    private func findFirstOverdueDeckID(decks: [Deck]) -> UUID? {
+        let now = Date()
+        return decks.first { deck in
+            (deck.cards ?? []).contains { $0.dueDate < now }
+        }?.id
     }
 
     private func computeWeeklyActivity(allLogs: [StudyLog]) -> [DayActivity] {
@@ -103,7 +118,9 @@ final class HomeInteractor {
             guard let date = calendar.date(byAdding: .day, value: offset, to: monday) else {
                 return DayActivity(dayLabel: dayLabels[offset], studiedCards: 0, isToday: false)
             }
-            let nextDate = calendar.date(byAdding: .day, value: 1, to: date)!
+            guard let nextDate = calendar.date(byAdding: .day, value: 1, to: date) else {
+                return DayActivity(dayLabel: dayLabels[offset], studiedCards: 0, isToday: false)
+            }
             let logsForDay = allLogs.filter { $0.studiedAt >= date && $0.studiedAt < nextDate }
             let isToday = calendar.isDateInToday(date)
             return DayActivity(

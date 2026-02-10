@@ -71,7 +71,7 @@ final class FlashCardPresenter: ObservableObject {
         viewState.currentFront = card.front
         viewState.currentBack = card.back
         viewState.isFlipped = false
-        viewState.intervals = interactor.computeIntervals(for: card)
+        viewState.intervals = interactor.computeIntervals(for: card, bundle: LanguageManager.shared.bundle)
     }
 
     private func showResult() {
@@ -82,9 +82,16 @@ final class FlashCardPresenter: ObservableObject {
             ? Double(result.correctCount) / Double(result.totalCards) * 100
             : 0
 
-        let minutes = result.elapsedSeconds / 60
-        let seconds = result.elapsedSeconds % 60
-        let timeText = "\(minutes):\(String(format: "%02d", seconds))"
+        let totalSeconds = Int(result.elapsedSeconds)
+        let hours = totalSeconds / 3600
+        let minutes = (totalSeconds % 3600) / 60
+        let seconds = totalSeconds % 60
+        let timeText: String
+        if hours > 0 {
+            timeText = "\(hours):\(String(format: "%02d", minutes)):\(String(format: "%02d", seconds))"
+        } else {
+            timeText = "\(minutes):\(String(format: "%02d", seconds))"
+        }
 
         let bundle = LanguageManager.shared.bundle
         let message: String

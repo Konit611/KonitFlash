@@ -33,7 +33,11 @@ final class AddDeckInteractor {
     func saveDeck(_ input: AddDeckInput) {
         let deck = Deck(name: input.name, deckDescription: input.description, colorTag: input.colorTag)
         modelContext.insert(deck)
-        try? modelContext.save()
+        do {
+            try modelContext.save()
+        } catch {
+            print("[KonitFlash] Failed to save deck: \(error)")
+        }
     }
 
     func updateDeck(deckID: UUID, input: AddDeckInput) {
@@ -43,6 +47,10 @@ final class AddDeckInteractor {
         deck.deckDescription = input.description
         deck.colorTagEnum = input.colorTag
         deck.updatedAt = Date()
-        try? modelContext.save()
+        do {
+            try modelContext.save()
+        } catch {
+            print("[KonitFlash] Failed to update deck: \(error)")
+        }
     }
 }

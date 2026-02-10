@@ -124,10 +124,7 @@ struct DeckDetailView: View {
     private var cardsSection: some View {
         VStack(spacing: isRegular ? 14 : 10) {
             HStack {
-                Text(isRegular
-                    ? String(localized: "My Flash Decks", bundle: LanguageManager.shared.bundle)
-                    : String(localized: "Cards in Deck", bundle: LanguageManager.shared.bundle)
-                )
+                Text("Cards in Deck", bundle: LanguageManager.shared.bundle)
                     .font(.system(size: isRegular ? 32 : 20, weight: .semibold))
                     .foregroundStyle(.white)
                 Spacer()
@@ -188,7 +185,7 @@ struct DeckDetailView: View {
                         Button {
                             presenter.selectedFilter = filter
                         } label: {
-                            Text(filter.rawValue)
+                            Text(filter.localizedLabel)
                                 .font(.system(size: isRegular ? 14 : 12, weight: .medium))
                                 .foregroundStyle(presenter.selectedFilter == filter ? .black : .white.opacity(0.6))
                                 .padding(.horizontal, isRegular ? 16 : 12)

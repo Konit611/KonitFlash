@@ -7,5 +7,5 @@ struct StudyResult {
     let hardCount: Int
     let goodCount: Int
     let easyCount: Int
-    let elapsedSeconds: Int
+    let elapsedSeconds: Double
 }

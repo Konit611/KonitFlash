@@ -48,7 +48,11 @@ final class CSVImportInteractor {
             imported += 1
         }
 
-        try? modelContext.save()
+        do {
+            try modelContext.save()
+        } catch {
+            print("[KonitFlash] Failed to save imported cards: \(error)")
+        }
         return imported
     }
 }

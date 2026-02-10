@@ -47,7 +47,11 @@ final class AddCardInteractor {
 
         let card = Card(front: input.front, back: input.back, deck: deck)
         modelContext.insert(card)
-        try? modelContext.save()
+        do {
+            try modelContext.save()
+        } catch {
+            print("[KonitFlash] Failed to save card: \(error)")
+        }
     }
 
     func updateCard(cardID: UUID, input: AddCardInput) {
@@ -56,6 +60,10 @@ final class AddCardInteractor {
         card.front = input.front
         card.back = input.back
         card.updatedAt = Date()
-        try? modelContext.save()
+        do {
+            try modelContext.save()
+        } catch {
+            print("[KonitFlash] Failed to update card: \(error)")
+        }
     }
 }
