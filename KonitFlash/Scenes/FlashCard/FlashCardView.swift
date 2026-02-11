@@ -24,6 +24,8 @@ struct FlashCardView: View {
             switch presenter.viewState.phase {
             case .studying:
                 studyingContent
+            case .waiting:
+                waitingContent
             case .result:
                 resultContent
             case .empty:
@@ -110,6 +112,54 @@ struct FlashCardView: View {
             .opacity(presenter.viewState.isFlipped ? 1 : 0)
             .allowsHitTesting(presenter.viewState.isFlipped)
             .animation(.easeInOut(duration: 0.3), value: presenter.viewState.isFlipped)
+        }
+        .padding(.horizontal, isRegular ? 40 : 15)
+        .padding(.bottom, isRegular ? 24 : 16)
+    }
+
+    // MARK: - Waiting
+
+    private var waitingContent: some View {
+        VStack(spacing: isRegular ? 24 : 16) {
+            ProgressHeaderView(
+                currentIndex: presenter.viewState.currentIndex,
+                totalCount: presenter.viewState.totalCount
+            )
+
+            Spacer()
+
+            VStack(spacing: isRegular ? 20 : 14) {
+                Image(systemName: "clock.fill")
+                    .font(.system(size: isRegular ? 48 : 36))
+                    .foregroundStyle(Color.weeklyMint)
+
+                Text("Next card in", bundle: LanguageManager.shared.bundle)
+                    .font(.system(size: isRegular ? 20 : 16, weight: .medium))
+                    .foregroundStyle(.white.opacity(0.7))
+
+                Text(presenter.viewState.waitingCountdown)
+                    .font(.system(size: isRegular ? 56 : 44, weight: .bold))
+                    .monospacedDigit()
+                    .foregroundStyle(.white)
+
+                Text(presenter.viewState.waitingMessage)
+                    .font(.system(size: isRegular ? 16 : 13))
+                    .foregroundStyle(.white.opacity(0.5))
+                    .multilineTextAlignment(.center)
+            }
+
+            Spacer()
+
+            Button {
+                presenter.skipWaiting()
+            } label: {
+                Text("End Session", bundle: LanguageManager.shared.bundle)
+                    .font(.system(size: isRegular ? 18 : 15, weight: .bold))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, isRegular ? 16 : 12)
+                    .background(.white.opacity(0.15), in: RoundedRectangle(cornerRadius: 14))
+            }
         }
         .padding(.horizontal, isRegular ? 40 : 15)
         .padding(.bottom, isRegular ? 24 : 16)

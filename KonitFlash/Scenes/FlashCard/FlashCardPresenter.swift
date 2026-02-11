@@ -7,8 +7,8 @@ final class FlashCardPresenter: ObservableObject {
 
     private var interactor: FlashCardInteractor?
     private var deckID: UUID?
-    private var cards: [Card] = []
-    private var currentCardIndex: Int = 0
+    private var currentCard: Card?
+    private var waitingTimer: Timer?
 
     func configure(modelContext: ModelContext, deckID: UUID) {
         self.deckID = deckID
@@ -23,55 +23,109 @@ final class FlashCardPresenter: ObservableObject {
 
     func loadData() {
         guard let interactor, let deckID else { return }
-        let session = interactor.fetchStudySession(deckID: deckID)
-        cards = session.cards
-        currentCardIndex = 0
+        stopTimer()
+
+        let session = interactor.startSession(deckID: deckID)
 
         viewState.deckName = session.deckName
-        viewState.totalCount = cards.count
+        viewState.totalCount = session.initialCardCount
 
-        if cards.isEmpty {
+        if session.initialCardCount == 0 {
             viewState.phase = .empty
         } else {
-            viewState.phase = .studying
-            showCurrentCard()
+            advanceToNextCard()
         }
     }
 
     func answerCard(grade: AnswerGrade) {
-        guard let interactor, currentCardIndex < cards.count else { return }
+        guard let interactor, let card = currentCard else { return }
+        currentCard = nil
 
-        let card = cards[currentCardIndex]
         interactor.recordAnswer(card: card, grade: grade)
-
-        currentCardIndex += 1
-
-        if currentCardIndex >= cards.count {
-            showResult()
-        } else {
-            showCurrentCard()
-        }
+        advanceToNextCard()
     }
 
     func flipCard() {
         viewState.isFlipped = true
     }
 
+    func skipWaiting() {
+        stopTimer()
+        showResult()
+    }
+
     func restartSession() {
         loadData()
     }
 
+    deinit {
+        waitingTimer?.invalidate()
+    }
+
     // MARK: - Private
 
-    private func showCurrentCard() {
-        guard let interactor, currentCardIndex < cards.count else { return }
+    private func advanceToNextCard() {
+        guard let interactor else { return }
 
-        let card = cards[currentCardIndex]
-        viewState.currentIndex = currentCardIndex + 1
+        let progress = interactor.currentProgress
+        viewState.currentIndex = progress.current
+        viewState.totalCount = progress.total
+
+        switch interactor.nextCard() {
+        case .card(let card):
+            currentCard = card
+            showCard(card)
+        case .waiting(let until):
+            currentCard = nil
+            startWaiting(until: until)
+        case .done:
+            currentCard = nil
+            showResult()
+        }
+    }
+
+    private func showCard(_ card: Card) {
+        guard let interactor else { return }
+        stopTimer()
+
+        let progress = interactor.currentProgress
+        viewState.phase = .studying
+        viewState.currentIndex = progress.current + 1
+        viewState.totalCount = progress.total
         viewState.currentFront = card.front
         viewState.currentBack = card.back
         viewState.isFlipped = false
         viewState.intervals = interactor.computeIntervals(for: card, bundle: LanguageManager.shared.bundle)
+    }
+
+    private func startWaiting(until readyAt: Date) {
+        let bundle = LanguageManager.shared.bundle
+        viewState.phase = .waiting
+        viewState.waitingMessage = String(localized: "Learning cards will reappear when ready", bundle: bundle)
+        updateCountdown(until: readyAt)
+
+        waitingTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            guard let self else { return }
+            let now = Date()
+            if now >= readyAt {
+                self.stopTimer()
+                self.advanceToNextCard()
+            } else {
+                self.updateCountdown(until: readyAt)
+            }
+        }
+    }
+
+    private func updateCountdown(until readyAt: Date) {
+        let remaining = max(0, Int(readyAt.timeIntervalSinceNow.rounded(.up)))
+        let minutes = remaining / 60
+        let seconds = remaining % 60
+        viewState.waitingCountdown = String(format: "%d:%02d", minutes, seconds)
+    }
+
+    private func stopTimer() {
+        waitingTimer?.invalidate()
+        waitingTimer = nil
     }
 
     private func showResult() {

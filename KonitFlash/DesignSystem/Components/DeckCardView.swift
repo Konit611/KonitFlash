@@ -6,11 +6,15 @@ struct DeckCardView: View {
     var onEditTap: (() -> Void)?
     var onDeleteTap: (() -> Void)?
 
+    @Environment(\.horizontalSizeClass) private var sizeClass
+
+    private var isRegular: Bool { sizeClass == .regular }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .top) {
                 Text(deck.name)
-                    .font(.system(size: 24, weight: .bold))
+                    .font(.system(size: isRegular ? 30 : 24, weight: .bold))
                     .foregroundStyle(.black)
                 Spacer()
                 Menu {
@@ -22,26 +26,26 @@ struct DeckCardView: View {
                     }
                 } label: {
                     Image(systemName: "ellipsis")
-                        .font(.system(size: 16, weight: .bold))
+                        .font(.system(size: isRegular ? 20 : 16, weight: .bold))
                         .foregroundStyle(.black.opacity(0.4))
                         .padding(4)
                 }
             }
-            .padding(.bottom, 6)
+            .padding(.bottom, isRegular ? 8 : 6)
 
             Text(deck.description)
-                .font(.system(size: 15))
+                .font(.system(size: isRegular ? 18 : 15))
                 .foregroundStyle(Color(hex: 0x555555))
                 .lineLimit(1)
-                .padding(.bottom, 14)
+                .padding(.bottom, isRegular ? 18 : 14)
 
-            HStack(spacing: 10) {
+            HStack(spacing: isRegular ? 14 : 10) {
                 VStack(spacing: 2) {
                     Text(deck.totalCards)
-                        .font(.system(size: 16, weight: .bold))
+                        .font(.system(size: isRegular ? 20 : 16, weight: .bold))
                         .foregroundStyle(.black)
                     Text("Total", bundle: LanguageManager.shared.bundle)
-                        .font(.system(size: 12))
+                        .font(.system(size: isRegular ? 14 : 12))
                         .foregroundStyle(Color(hex: 0x555555))
                 }
 
@@ -49,52 +53,52 @@ struct DeckCardView: View {
                     HStack {
                         Spacer()
                         Text(deck.progressPercent)
-                            .font(.system(size: 12, weight: .semibold))
+                            .font(.system(size: isRegular ? 14 : 12, weight: .semibold))
                             .foregroundStyle(Color(hex: 0x9095A1))
                     }
                     GeometryReader { geo in
-                        ZStack(alignment: .leading) {
-                            RoundedRectangle(cornerRadius: 30)
-                                .fill(.black)
-                                .frame(height: 7)
-                            RoundedRectangle(cornerRadius: 30)
-                                .fill(deck.progressColor)
-                                .frame(width: geo.size.width * deck.progress, height: 5)
-                                .padding(.leading, 0.5)
-                        }
+                        Capsule()
+                            .fill(.black)
+                            .frame(height: isRegular ? 9 : 7)
+                            .overlay(alignment: .leading) {
+                                Capsule()
+                                    .fill(deck.progressColor)
+                                    .frame(width: max(0, geo.size.width * deck.progress), height: isRegular ? 7 : 5)
+                            }
+                            .clipShape(Capsule())
                     }
-                    .frame(height: 7)
+                    .frame(height: isRegular ? 9 : 7)
                 }
             }
-            .padding(.bottom, 16)
+            .padding(.bottom, isRegular ? 20 : 16)
 
             HStack(spacing: 0) {
-                HStack(spacing: 3) {
+                HStack(spacing: isRegular ? 4 : 3) {
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 12))
+                        .font(.system(size: isRegular ? 14 : 12))
                         .foregroundStyle(.white)
                     Text("\(deck.dueCards)")
-                        .font(.system(size: 15, weight: .bold))
+                        .font(.system(size: isRegular ? 18 : 15, weight: .bold))
                         .foregroundStyle(.white)
                     Text("cards", bundle: LanguageManager.shared.bundle)
-                        .font(.system(size: 11))
+                        .font(.system(size: isRegular ? 13 : 11))
                         .foregroundStyle(Color(hex: 0xC7C7C7))
                 }
 
                 Rectangle()
                     .fill(Color.white.opacity(0.2))
-                    .frame(width: 1, height: 24)
-                    .padding(.horizontal, 10)
+                    .frame(width: 1, height: isRegular ? 28 : 24)
+                    .padding(.horizontal, isRegular ? 14 : 10)
 
-                HStack(spacing: 3) {
+                HStack(spacing: isRegular ? 4 : 3) {
                     Image(systemName: "clock.fill")
-                        .font(.system(size: 12))
+                        .font(.system(size: isRegular ? 14 : 12))
                         .foregroundStyle(.white)
                     Text("\(deck.estimatedMinutes)")
-                        .font(.system(size: 15, weight: .bold))
+                        .font(.system(size: isRegular ? 18 : 15, weight: .bold))
                         .foregroundStyle(.white)
                     Text("min", bundle: LanguageManager.shared.bundle)
-                        .font(.system(size: 11))
+                        .font(.system(size: isRegular ? 13 : 11))
                         .foregroundStyle(Color(hex: 0xC7C7C7))
                 }
 
@@ -105,22 +109,22 @@ struct DeckCardView: View {
                 } label: {
                     HStack(spacing: 4) {
                         Text("Start", bundle: LanguageManager.shared.bundle)
-                            .font(.system(size: 15, weight: .semibold))
+                            .font(.system(size: isRegular ? 18 : 15, weight: .semibold))
                         Image(systemName: "arrow.right")
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(.system(size: isRegular ? 13 : 11, weight: .semibold))
                     }
                     .foregroundStyle(.black)
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 6)
-                    .background(.white, in: RoundedRectangle(cornerRadius: 12))
+                    .padding(.horizontal, isRegular ? 18 : 14)
+                    .padding(.vertical, isRegular ? 8 : 6)
+                    .background(.white, in: RoundedRectangle(cornerRadius: isRegular ? 14 : 12))
                 }
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 10)
-            .background(.black, in: RoundedRectangle(cornerRadius: 20))
+            .padding(.horizontal, isRegular ? 16 : 12)
+            .padding(.vertical, isRegular ? 12 : 10)
+            .background(.black, in: RoundedRectangle(cornerRadius: isRegular ? 22 : 20))
         }
-        .padding(20)
-        .background(.white, in: RoundedRectangle(cornerRadius: 18))
+        .padding(isRegular ? 24 : 20)
+        .background(.white, in: RoundedRectangle(cornerRadius: isRegular ? 20 : 18))
     }
 }
 

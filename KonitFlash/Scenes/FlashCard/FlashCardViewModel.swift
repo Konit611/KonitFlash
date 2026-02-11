@@ -2,6 +2,7 @@ import Foundation
 
 enum FlashCardPhase {
     case studying
+    case waiting
     case result
     case empty
 }
@@ -15,6 +16,10 @@ struct FlashCardViewState {
     var currentBack: String = ""
     var isFlipped: Bool = false
     var intervals: [AnswerGrade: String] = [:]
+
+    // Waiting
+    var waitingCountdown: String = ""
+    var waitingMessage: String = ""
 
     // Result
     var accuracyPercent: Double = 0

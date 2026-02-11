@@ -56,7 +56,8 @@ struct AddCardView: View {
                 text: Binding(
                     get: { presenter.viewState.front },
                     set: { presenter.updateFront($0) }
-                )
+                ),
+                placeholder: String(localized: "Enter front text", bundle: LanguageManager.shared.bundle)
             )
             .padding(.bottom, isRegular ? 20 : 16)
 
@@ -71,6 +72,7 @@ struct AddCardView: View {
                     get: { presenter.viewState.back },
                     set: { presenter.updateBack($0) }
                 ),
+                placeholder: String(localized: "Enter back text", bundle: LanguageManager.shared.bundle),
                 isMultiline: true
             )
         }

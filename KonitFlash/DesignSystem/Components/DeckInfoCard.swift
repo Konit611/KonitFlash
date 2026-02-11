@@ -16,16 +16,37 @@ struct DeckInfoCard: View {
     var body: some View {
         HStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 0) {
-                HStack(spacing: 6) {
-                    Text("🔥")
-                        .font(.system(size: isRegular ? 14 : 12))
-                    Text("\(dueTodayCount) due today", bundle: LanguageManager.shared.bundle)
-                        .font(.system(size: isRegular ? 18 : 14, weight: .bold))
-                        .foregroundStyle(.black)
+                HStack {
+                    HStack(spacing: 6) {
+                        Text("🔥")
+                            .font(.system(size: isRegular ? 14 : 12))
+                        Text("\(dueTodayCount) due today", bundle: LanguageManager.shared.bundle)
+                            .font(.system(size: isRegular ? 18 : 14, weight: .bold))
+                            .foregroundStyle(.black)
+                    }
+                    .padding(.horizontal, isRegular ? 16 : 12)
+                    .padding(.vertical, isRegular ? 8 : 6)
+                    .background(Color.deckBadge, in: RoundedRectangle(cornerRadius: 8))
+
+                    if !isRegular {
+                        Spacer()
+
+                        Button {
+                            onStartTap?()
+                        } label: {
+                            HStack(spacing: 4) {
+                                Text("Start", bundle: LanguageManager.shared.bundle)
+                                    .font(.system(size: 14, weight: .semibold))
+                                Image(systemName: "arrow.right")
+                                    .font(.system(size: 10, weight: .semibold))
+                            }
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 6)
+                            .background(.black, in: RoundedRectangle(cornerRadius: 12))
+                        }
+                    }
                 }
-                .padding(.horizontal, isRegular ? 16 : 12)
-                .padding(.vertical, isRegular ? 8 : 6)
-                .background(Color.deckBadge, in: RoundedRectangle(cornerRadius: 8))
                 .padding(.bottom, isRegular ? 20 : 14)
 
                 Text(deckName)
@@ -89,25 +110,6 @@ struct DeckInfoCard: View {
                     .frame(width: 91, height: 117)
                     .background(.black, in: RoundedRectangle(cornerRadius: 12))
                 }
-            }
-        }
-        .overlay(alignment: .topTrailing) {
-            if !isRegular {
-                Button {
-                    onStartTap?()
-                } label: {
-                    HStack(spacing: 4) {
-                        Text("Start", bundle: LanguageManager.shared.bundle)
-                            .font(.system(size: 14, weight: .semibold))
-                        Image(systemName: "arrow.right")
-                            .font(.system(size: 10, weight: .semibold))
-                    }
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 6)
-                    .background(.black, in: RoundedRectangle(cornerRadius: 12))
-                }
-                .padding(20)
             }
         }
         .padding(isRegular ? 24 : 20)

@@ -3,6 +3,7 @@ import SwiftUI
 struct FormFieldView: View {
     let label: String
     @Binding var text: String
+    var placeholder: String = ""
     var isMultiline: Bool = false
     @Environment(\.horizontalSizeClass) private var sizeClass
 
@@ -15,33 +16,55 @@ struct FormFieldView: View {
                 .foregroundStyle(Color(hex: 0x555555))
 
             if isMultiline {
-                TextEditor(text: $text)
-                    .font(.system(size: isRegular ? 20 : 16))
-                    .foregroundStyle(.black)
-                    .scrollContentBackground(.hidden)
-                    .frame(minHeight: isRegular ? 120 : 80)
+                ZStack(alignment: .topLeading) {
+                    if text.isEmpty {
+                        Text(placeholder)
+                            .font(.system(size: isRegular ? 20 : 16))
+                            .foregroundStyle(Color(hex: 0xBBBBBB))
+                            .padding(.horizontal, isRegular ? 16 : 12)
+                            .padding(.vertical, isRegular ? 14 : 10)
+                    }
+                    TextEditor(text: $text)
+                        .font(.system(size: isRegular ? 20 : 16))
+                        .foregroundStyle(.black)
+                        .scrollContentBackground(.hidden)
+                        .padding(.horizontal, isRegular ? 11 : 7)
+                        .padding(.vertical, isRegular ? 6 : 2)
+                }
+                .frame(minHeight: isRegular ? 140 : 100)
+                .background(Color(hex: 0xF5F5F5), in: RoundedRectangle(cornerRadius: isRegular ? 12 : 10))
             } else {
-                TextField("", text: $text)
+                TextField(placeholder, text: $text)
                     .font(.system(size: isRegular ? 20 : 16))
                     .foregroundStyle(.black)
+                    .padding(.horizontal, isRegular ? 16 : 12)
+                    .padding(.vertical, isRegular ? 14 : 10)
+                    .background(Color(hex: 0xF5F5F5), in: RoundedRectangle(cornerRadius: isRegular ? 12 : 10))
             }
         }
     }
 }
 
 #Preview("iPhone") {
-    FormFieldView(label: "Deck Name", text: .constant("English Vocabulary"))
-        .padding()
-        .background(.white, in: RoundedRectangle(cornerRadius: 18))
-        .padding()
-        .background(Color.appBackground)
+    VStack(spacing: 20) {
+        FormFieldView(label: "Deck Name", text: .constant(""), placeholder: "Enter deck name")
+        FormFieldView(label: "Deck Name", text: .constant("English Vocabulary"), placeholder: "Enter deck name")
+        FormFieldView(label: "Description", text: .constant(""), placeholder: "Enter description", isMultiline: true)
+    }
+    .padding()
+    .background(.white, in: RoundedRectangle(cornerRadius: 18))
+    .padding()
+    .background(Color.appBackground)
 }
 
 #Preview("Mac") {
-    FormFieldView(label: "Deck Name", text: .constant("English Vocabulary"))
-        .padding()
-        .background(.white, in: RoundedRectangle(cornerRadius: 18))
-        .padding(40)
-        .frame(width: 700)
-        .background(Color.appBackground)
+    VStack(spacing: 20) {
+        FormFieldView(label: "Deck Name", text: .constant(""), placeholder: "Enter deck name")
+        FormFieldView(label: "Description", text: .constant(""), placeholder: "Enter description", isMultiline: true)
+    }
+    .padding()
+    .background(.white, in: RoundedRectangle(cornerRadius: 18))
+    .padding(40)
+    .frame(width: 700)
+    .background(Color.appBackground)
 }

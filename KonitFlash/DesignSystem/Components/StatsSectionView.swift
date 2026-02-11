@@ -25,21 +25,19 @@ struct StatsSectionView: View {
 
     private var streakCard: some View {
         VStack(spacing: 0) {
-            HStack {
-                Image(systemName: "flame.fill")
-                    .font(.system(size: isRegular ? 28 : 20))
-                    .foregroundStyle(.orange)
-                    .padding(isRegular ? 8 : 5)
-                    .background(Color.white.opacity(0.5), in: Circle())
-                Spacer()
-            }
-            .padding(.bottom, isRegular ? 16 : 12)
+            Image(systemName: "flame.fill")
+                .font(.system(size: isRegular ? 34 : 20))
+                .foregroundStyle(.orange)
+                .padding(isRegular ? 10 : 5)
+                .background(Color.white.opacity(0.5), in: Circle())
+
+            Spacer()
 
             Text(stats.streakText)
-                .font(.system(size: isRegular ? 48 : 36, weight: .bold))
+                .font(.system(size: isRegular ? 64 : 36, weight: .bold))
                 .foregroundStyle(.black)
             Text("STREAK", bundle: LanguageManager.shared.bundle)
-                .font(.system(size: isRegular ? 16 : 14, weight: .bold))
+                .font(.system(size: isRegular ? 20 : 14, weight: .bold))
                 .foregroundStyle(Color(hex: 0x7C6172))
                 .tracking(1)
                 .padding(.top, 2)
@@ -47,62 +45,63 @@ struct StatsSectionView: View {
             Spacer()
 
             Text(stats.streakMessage)
-                .font(.system(size: isRegular ? 14 : 11, weight: .bold))
+                .font(.system(size: isRegular ? 18 : 11, weight: .bold))
                 .foregroundStyle(.black)
-                .padding(.horizontal, isRegular ? 16 : 12)
-                .padding(.vertical, isRegular ? 6 : 4)
-                .background(Color.deckBadge, in: RoundedRectangle(cornerRadius: 6))
+                .padding(.horizontal, isRegular ? 20 : 12)
+                .padding(.vertical, isRegular ? 8 : 4)
+                .background(Color.deckBadge, in: RoundedRectangle(cornerRadius: isRegular ? 8 : 6))
         }
-        .padding(isRegular ? 20 : 14)
-        .frame(maxHeight: .infinity)
+        .padding(isRegular ? 24 : 14)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.streakPink, in: RoundedRectangle(cornerRadius: isRegular ? 20 : 18))
     }
 
     private var learnedReviewsCard: some View {
-        VStack(alignment: .leading, spacing: isRegular ? 14 : 10) {
+        VStack(alignment: .leading, spacing: isRegular ? 16 : 10) {
             Text("Let's crush more cards.", bundle: LanguageManager.shared.bundle)
-                .font(.system(size: isRegular ? 16 : 14, weight: .bold))
+                .font(.system(size: isRegular ? 22 : 14, weight: .bold))
                 .foregroundStyle(.black)
 
             HStack(spacing: isRegular ? 12 : 5) {
-                VStack(spacing: isRegular ? 6 : 6) {
+                VStack(spacing: isRegular ? 8 : 6) {
                     Image(systemName: "book.fill")
-                        .font(.system(size: isRegular ? 16 : 16))
+                        .font(.system(size: isRegular ? 22 : 16))
                         .foregroundStyle(.black.opacity(0.6))
                     Text(stats.learnedText)
-                        .font(.system(size: isRegular ? 48 : 32, weight: .bold))
+                        .font(.system(size: isRegular ? 64 : 32, weight: .bold))
                         .foregroundStyle(.black)
                         .minimumScaleFactor(0.5)
                         .lineLimit(1)
                     Text("LEARNED", bundle: LanguageManager.shared.bundle)
-                        .font(.system(size: isRegular ? 14 : 12, weight: .bold))
+                        .font(.system(size: isRegular ? 18 : 12, weight: .bold))
                         .foregroundStyle(Color(hex: 0x7C6172))
                         .tracking(1)
                 }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, isRegular ? 14 : 14)
-                .background(Color.reviewsGreen, in: RoundedRectangle(cornerRadius: 18))
+                .frame(maxWidth: .infinity, maxHeight: isRegular ? .infinity : nil)
+                .padding(.vertical, isRegular ? 20 : 14)
+                .background(Color.reviewsGreen, in: RoundedRectangle(cornerRadius: isRegular ? 20 : 18))
 
-                VStack(spacing: isRegular ? 6 : 6) {
+                VStack(spacing: isRegular ? 8 : 6) {
                     Image(systemName: "square.3.layers.3d")
-                        .font(.system(size: isRegular ? 16 : 16))
+                        .font(.system(size: isRegular ? 22 : 16))
                         .foregroundStyle(.black.opacity(0.6))
                     Text(stats.reviewsText)
-                        .font(.system(size: isRegular ? 48 : 32, weight: .bold))
+                        .font(.system(size: isRegular ? 64 : 32, weight: .bold))
                         .foregroundStyle(.black)
                         .minimumScaleFactor(0.5)
                         .lineLimit(1)
                     Text("REVIEWS", bundle: LanguageManager.shared.bundle)
-                        .font(.system(size: isRegular ? 14 : 12, weight: .bold))
+                        .font(.system(size: isRegular ? 18 : 12, weight: .bold))
                         .foregroundStyle(Color(hex: 0x7C6172))
                         .tracking(1)
                 }
-                .frame(maxWidth: .infinity)
+                .frame(maxWidth: .infinity, maxHeight: isRegular ? .infinity : nil)
                 .padding(.vertical, isRegular ? 20 : 14)
-                .background(Color.reviewsGreen, in: RoundedRectangle(cornerRadius: 18))
+                .background(Color.reviewsGreen, in: RoundedRectangle(cornerRadius: isRegular ? 20 : 18))
             }
+            .frame(maxHeight: isRegular ? .infinity : nil)
         }
-        .padding(isRegular ? 16 : 10)
+        .padding(isRegular ? 24 : 10)
         .frame(maxHeight: .infinity)
         .background(Color.learnedGreen, in: RoundedRectangle(cornerRadius: isRegular ? 20 : 18))
     }

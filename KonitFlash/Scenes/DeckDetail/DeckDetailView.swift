@@ -49,22 +49,27 @@ struct DeckDetailView: View {
                     }
                     .frame(height: 241)
                 } else {
-                    DeckInfoCard(
-                        deckName: presenter.viewState.deckName,
-                        description: presenter.viewState.deckDescription,
-                        dueTodayCount: presenter.viewState.dueTodayCount,
-                        totalCards: presenter.viewState.totalCards,
-                        progress: presenter.viewState.progress,
-                        progressPercent: presenter.viewState.progressPercent,
-                        progressColor: presenter.viewState.progressColor,
-                        onStartTap: startStudy
-                    )
+                    VStack(spacing: 0) {
+                        DeckInfoCard(
+                            deckName: presenter.viewState.deckName,
+                            description: presenter.viewState.deckDescription,
+                            dueTodayCount: presenter.viewState.dueTodayCount,
+                            totalCards: presenter.viewState.totalCards,
+                            progress: presenter.viewState.progress,
+                            progressPercent: presenter.viewState.progressPercent,
+                            progressColor: presenter.viewState.progressColor,
+                            onStartTap: startStudy
+                        )
 
-                    DeckStatsSection(
-                        newCount: presenter.viewState.newCount,
-                        learningCount: presenter.viewState.learningCount,
-                        reviewedCount: presenter.viewState.reviewedCount
-                    )
+                        deckInfoDots
+                            .zIndex(1)
+
+                        DeckStatsSection(
+                            newCount: presenter.viewState.newCount,
+                            learningCount: presenter.viewState.learningCount,
+                            reviewedCount: presenter.viewState.reviewedCount
+                        )
+                    }
                 }
 
                 cardsSection
@@ -109,6 +114,18 @@ struct DeckDetailView: View {
         }
     }
 
+    private var deckInfoDots: some View {
+        HStack(spacing: 0) {
+            ForEach(0..<3, id: \.self) { _ in
+                Circle()
+                    .fill(Color(hex: 0x2A2A2A))
+                    .frame(width: 15, height: 15)
+                    .frame(maxWidth: .infinity)
+            }
+        }
+        .padding(.vertical, -4)
+    }
+
     private func startStudy() {
         navTarget = .flashCard
     }
@@ -116,7 +133,7 @@ struct DeckDetailView: View {
     // MARK: - Header
 
     private var header: some View {
-        AppHeaderView(showSettings: true, onDismiss: { dismiss() })
+        AppHeaderView(onDismiss: { dismiss() })
     }
 
     // MARK: - Cards Section
@@ -127,6 +144,9 @@ struct DeckDetailView: View {
                 Text("Cards in Deck", bundle: LanguageManager.shared.bundle)
                     .font(.system(size: isRegular ? 32 : 20, weight: .semibold))
                     .foregroundStyle(.white)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+
                 Spacer()
 
                 NavigationLink(value: NavigationRoute.csvImport(deckID: deckID)) {
@@ -135,12 +155,14 @@ struct DeckDetailView: View {
                             .font(.system(size: isRegular ? 14 : 12, weight: .medium))
                         Text("Import", bundle: LanguageManager.shared.bundle)
                             .font(.system(size: isRegular ? 16 : 14, weight: .medium))
+                            .lineLimit(1)
                     }
                     .foregroundStyle(.black)
                     .padding(.horizontal, isRegular ? 16 : 12)
                     .padding(.vertical, isRegular ? 10 : 7)
                     .background(.white.opacity(0.8), in: RoundedRectangle(cornerRadius: isRegular ? 12 : 18))
                 }
+                .fixedSize()
 
                 NavigationLink(value: NavigationRoute.addCard(deckID: deckID)) {
                     HStack(spacing: 4) {
@@ -148,12 +170,14 @@ struct DeckDetailView: View {
                             .font(.system(size: isRegular ? 16 : 14, weight: .medium))
                         Text("Add Card", bundle: LanguageManager.shared.bundle)
                             .font(.system(size: isRegular ? 20 : 16, weight: .semibold))
+                            .lineLimit(1)
                     }
                     .foregroundStyle(.black)
                     .padding(.horizontal, isRegular ? 24 : 16)
                     .padding(.vertical, isRegular ? 12 : 8)
                     .background(.white, in: RoundedRectangle(cornerRadius: isRegular ? 12 : 18))
                 }
+                .fixedSize()
             }
             .padding(.top, 6)
 

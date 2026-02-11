@@ -23,6 +23,9 @@ struct HomeView: View {
                             if let deckID = presenter.viewState.firstOverdueDeckID {
                                 path.append(NavigationRoute.flashCard(deckID: deckID))
                             }
+                        },
+                        onOverdueList: {
+                            path.append(NavigationRoute.overdueList)
                         }
                     )
                 }
@@ -116,9 +119,9 @@ struct HomeView: View {
                 NavigationLink(value: NavigationRoute.addDeck) {
                     HStack(spacing: 4) {
                         Image(systemName: "plus")
-                            .font(.system(size: 14, weight: .medium))
+                            .font(.system(size: isRegular ? 16 : 14, weight: .medium))
                         Text("New Deck", bundle: LanguageManager.shared.bundle)
-                            .font(.system(size: 16, weight: .medium))
+                            .font(.system(size: isRegular ? 20 : 16, weight: .medium))
                     }
                     .foregroundStyle(.black)
                     .padding(.horizontal, isRegular ? 24 : 16)

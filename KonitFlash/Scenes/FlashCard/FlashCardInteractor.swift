@@ -1,9 +1,26 @@
 import Foundation
 import SwiftData
 
-struct StudySession {
+struct SessionInfo {
     let deckName: String
-    let cards: [Card]
+    let initialCardCount: Int
+}
+
+struct LearningEntry {
+    let card: Card
+    let readyAt: Date
+}
+
+enum NextCardResult {
+    case card(Card)
+    case waiting(until: Date)
+    case done
+}
+
+struct AnswerResult {
+    let wasRequeued: Bool
+    let completedSteps: Int
+    let totalSteps: Int
 }
 
 final class FlashCardInteractor {
@@ -12,18 +29,31 @@ final class FlashCardInteractor {
     private var startDate = Date()
     private var lastAnswerTime = Date()
 
+    private(set) var reviewQueue: [Card] = []
+    private(set) var learningQueue: [LearningEntry] = []
+    private(set) var totalSteps: Int = 0
+    private(set) var completedSteps: Int = 0
+
+    var currentProgress: (current: Int, total: Int) {
+        (completedSteps, totalSteps)
+    }
+
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
     }
 
-    func fetchStudySession(deckID: UUID) -> StudySession {
+    func startSession(deckID: UUID) -> SessionInfo {
         startDate = Date()
         lastAnswerTime = startDate
         answers = []
+        learningQueue = []
+        completedSteps = 0
 
         let deckDescriptor = FetchDescriptor<Deck>(predicate: #Predicate { $0.id == deckID })
         guard let deck = try? modelContext.fetch(deckDescriptor).first else {
-            return StudySession(deckName: "", cards: [])
+            reviewQueue = []
+            totalSteps = 0
+            return SessionInfo(deckName: "", initialCardCount: 0)
         }
 
         let now = Date()
@@ -32,7 +62,32 @@ final class FlashCardInteractor {
             .sorted { $0.dueDate < $1.dueDate }
             .prefix(20)
 
-        return StudySession(deckName: deck.name, cards: Array(dueCards))
+        reviewQueue = Array(dueCards)
+        totalSteps = reviewQueue.count
+
+        return SessionInfo(deckName: deck.name, initialCardCount: reviewQueue.count)
+    }
+
+    func nextCard() -> NextCardResult {
+        // 1. Check learning queue for ready cards
+        let now = Date()
+        if let readyIndex = learningQueue.firstIndex(where: { $0.readyAt <= now }) {
+            let entry = learningQueue.remove(at: readyIndex)
+            return .card(entry.card)
+        }
+
+        // 2. Check review queue
+        if !reviewQueue.isEmpty {
+            return .card(reviewQueue.removeFirst())
+        }
+
+        // 3. Check if learning cards are waiting
+        if let earliest = learningQueue.min(by: { $0.readyAt < $1.readyAt }) {
+            return .waiting(until: earliest.readyAt)
+        }
+
+        // 4. All done
+        return .done
     }
 
     func computeIntervals(for card: Card, bundle: Bundle = .main) -> [AnswerGrade: String] {
@@ -45,7 +100,8 @@ final class FlashCardInteractor {
         )
     }
 
-    func recordAnswer(card: Card, grade: AnswerGrade) {
+    @discardableResult
+    func recordAnswer(card: Card, grade: AnswerGrade) -> AnswerResult {
         answers.append((card: card, grade: grade))
 
         let result = SRSEngine.compute(
@@ -74,6 +130,21 @@ final class FlashCardInteractor {
         } catch {
             print("[KonitFlash] Failed to save answer: \(error)")
         }
+
+        // Re-queue intraday cards (interval < 1 day)
+        let wasRequeued = result.interval < 1.0
+        if wasRequeued {
+            learningQueue.append(LearningEntry(card: card, readyAt: result.dueDate))
+            totalSteps += 1
+        }
+
+        completedSteps += 1
+
+        return AnswerResult(
+            wasRequeued: wasRequeued,
+            completedSteps: completedSteps,
+            totalSteps: totalSteps
+        )
     }
 
     func computeStudyResult() -> StudyResult {

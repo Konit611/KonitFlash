@@ -77,12 +77,10 @@ final class HomePresenter: ObservableObject {
 
     private func streakMessage(for days: Int) -> String {
         let bundle = LanguageManager.shared.bundle
-        if days >= 7 {
-            return String(localized: "Keep it up !", bundle: bundle)
-        } else if days >= 3 {
+        if days >= 3 && days < 7 {
             return String(localized: "Nice going !", bundle: bundle)
         } else {
-            return String(localized: "Let's start !", bundle: bundle)
+            return String(localized: "Keep it up !", bundle: bundle)
         }
     }
 

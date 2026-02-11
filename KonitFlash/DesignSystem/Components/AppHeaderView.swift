@@ -28,10 +28,9 @@ struct AppHeaderView: View {
 
     @ViewBuilder
     private var leadingContent: some View {
-        if isRegular {
+        if isRegular, onDismiss == nil {
             HStack(spacing: 10) {
                 logoCircle
-                    .onTapGesture { onDismiss?() }
                 Text("KONIT Flash")
                     .font(.system(size: 24, weight: .bold))
                     .foregroundStyle(.white)
@@ -43,16 +42,14 @@ struct AppHeaderView: View {
                 ZStack {
                     Circle()
                         .fill(Color.white.opacity(0.1))
-                        .frame(width: 40, height: 40)
+                        .frame(width: isRegular ? 50 : 40, height: isRegular ? 50 : 40)
                     Image(systemName: "chevron.left")
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(.system(size: isRegular ? 20 : 16, weight: .semibold))
                         .foregroundStyle(.white)
                 }
             }
         } else {
-            HStack(spacing: 10) {
-                logoCircle
-            }
+            logoCircle
         }
     }
 
@@ -61,34 +58,32 @@ struct AppHeaderView: View {
         if showSettings {
             NavigationLink(value: NavigationRoute.settings) {
                 ZStack {
-                    Circle()
-                        .fill(Color.white.opacity(0.1))
+                    RoundedRectangle(cornerRadius: isRegular ? 12 : 9)
+                        .fill(Color.white.opacity(0.08))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: isRegular ? 12 : 9)
+                                .stroke(Color.white.opacity(0.15), lineWidth: 1)
+                        )
                         .frame(width: isRegular ? 50 : 40, height: isRegular ? 50 : 40)
                     Image(systemName: "gearshape.fill")
                         .font(.system(size: isRegular ? 22 : 18))
-                        .foregroundStyle(.white.opacity(0.7))
+                        .foregroundStyle(.white)
                 }
             }
         } else if title != nil {
             // Invisible spacer for centering title
-            Circle()
+            RoundedRectangle(cornerRadius: isRegular ? 12 : 9)
                 .fill(.clear)
                 .frame(width: isRegular ? 50 : 40, height: isRegular ? 50 : 40)
         }
     }
 
     private var logoCircle: some View {
-        ZStack {
-            Circle()
-                .fill(Color.appBackground)
-                .frame(width: isRegular ? 50 : 40, height: isRegular ? 50 : 40)
-                .overlay(
-                    Circle().stroke(Color.learnedGreen.opacity(0.3), lineWidth: 1)
-                )
-            Image(systemName: "bolt.fill")
-                .font(.system(size: isRegular ? 22 : 18, weight: .bold))
-                .foregroundStyle(Color.learnedGreen)
-        }
+        Image("AppLogo")
+            .resizable()
+            .scaledToFill()
+            .frame(width: isRegular ? 50 : 40, height: isRegular ? 50 : 40)
+            .clipShape(RoundedRectangle(cornerRadius: isRegular ? 12 : 9))
     }
 }
 

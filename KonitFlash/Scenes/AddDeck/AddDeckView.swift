@@ -50,7 +50,8 @@ struct AddDeckView: View {
                 text: Binding(
                     get: { presenter.viewState.name },
                     set: { presenter.updateName($0) }
-                )
+                ),
+                placeholder: String(localized: "Enter deck name", bundle: LanguageManager.shared.bundle)
             )
 
             FormFieldView(
@@ -58,7 +59,9 @@ struct AddDeckView: View {
                 text: Binding(
                     get: { presenter.viewState.description },
                     set: { presenter.updateDescription($0) }
-                )
+                ),
+                placeholder: String(localized: "Enter description", bundle: LanguageManager.shared.bundle),
+                isMultiline: true
             )
 
             ColorTagPicker(
