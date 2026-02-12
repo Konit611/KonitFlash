@@ -35,6 +35,7 @@ struct FlashCardView: View {
         .background(Color.appBackground)
         .navigationBarHidden(true)
         .onAppear { presenter.configure(modelContext: modelContext, deckID: deckID) }
+        .onDisappear { WidgetDataService.writeWidgetData(from: modelContext) }
         #if os(macOS)
         .onKeyPress(.space) {
             if presenter.viewState.phase == .studying && !presenter.viewState.isFlipped {

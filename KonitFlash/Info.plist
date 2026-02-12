@@ -6,5 +6,16 @@
 	<array>
 		<string>remote-notification</string>
 	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>konitflash</string>
+			</array>
+			<key>CFBundleURLName</key>
+			<string>geunil.KonitFlash</string>
+		</dict>
+	</array>
 </dict>
 </plist>

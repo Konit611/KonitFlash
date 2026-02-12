@@ -44,7 +44,10 @@ struct HomeView: View {
         }
         .background(Color.appBackground)
         .navigationBarHidden(true)
-        .onAppear { presenter.configure(modelContext: modelContext) }
+        .onAppear {
+            presenter.configure(modelContext: modelContext)
+            WidgetDataService.writeWidgetData(from: modelContext)
+        }
         .confirmationDialog(
             "Delete \"\(deckToDelete?.name ?? "")\"?",
             isPresented: Binding(
@@ -172,11 +175,11 @@ struct HomeView: View {
 }
 
 #Preview("iPhone") {
-    ContentView()
+    ContentView(path: .constant(NavigationPath()))
         .modelContainer(for: [Deck.self, Card.self, StudyLog.self], inMemory: true)
 }
 
 #Preview("iPad") {
-    ContentView()
+    ContentView(path: .constant(NavigationPath()))
         .modelContainer(for: [Deck.self, Card.self, StudyLog.self], inMemory: true)
 }

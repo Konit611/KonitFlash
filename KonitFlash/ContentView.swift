@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @State private var path = NavigationPath()
+    @Binding var path: NavigationPath
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -34,6 +34,6 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    ContentView(path: .constant(NavigationPath()))
         .modelContainer(for: [Deck.self, Card.self, StudyLog.self], inMemory: true)
 }

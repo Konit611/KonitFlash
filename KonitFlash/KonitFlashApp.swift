@@ -1,16 +1,10 @@
-//
-//  KonitFlashApp.swift
-//  KonitFlash
-//
-//  Created by GEUNIL on 2026/02/01.
-//
-
 import SwiftUI
 import SwiftData
 
 @main
 struct KonitFlashApp: App {
     @StateObject private var languageManager = LanguageManager.shared
+    @State private var path = NavigationPath()
 
     let container: ModelContainer
 
@@ -31,9 +25,26 @@ struct KonitFlashApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(path: $path)
                 .environment(\.locale, languageManager.locale)
+                .onOpenURL { url in
+                    handleDeepLink(url)
+                }
         }
         .modelContainer(container)
+    }
+
+    private func handleDeepLink(_ url: URL) {
+        guard url.scheme == "konitflash" else { return }
+
+        switch url.host {
+        case "study":
+            let pathComponent = url.pathComponents.dropFirst().first ?? ""
+            guard let deckID = UUID(uuidString: pathComponent) else { return }
+            path = NavigationPath()
+            path.append(NavigationRoute.flashCard(deckID: deckID))
+        default:
+            path = NavigationPath()
+        }
     }
 }
