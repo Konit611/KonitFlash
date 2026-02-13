@@ -14,7 +14,6 @@ extension Color {
     static let widgetBackground = Color(hex: 0x040422)
     static let widgetStreakPink = Color(hex: 0xFFC7EA)
     static let widgetLearnedGreen = Color(hex: 0xD4F849)
-    static let widgetMint = Color(hex: 0x9CF2E8)
 
     static func widgetColorTag(_ tag: String) -> Color {
         switch tag {

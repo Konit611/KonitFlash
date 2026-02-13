@@ -6,7 +6,19 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		C614183A2F3F4B0B004D0574 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C61418102F3F492B004D0574 /* WidgetKit.framework */; };
+		C614183B2F3F4B0B004D0574 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C61418122F3F492B004D0574 /* SwiftUI.framework */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
+		C61418442F3F4B0D004D0574 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C67AE0212F2EF42400B2A92C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C61418382F3F4B0B004D0574;
+			remoteInfo = KonitFlashWidgetExtension;
+		};
 		C67AE03B2F2EF42600B2A92C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C67AE0212F2EF42400B2A92C /* Project object */;
@@ -23,13 +35,37 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		C61418232F3F492D004D0574 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		C61418102F3F492B004D0574 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		C61418122F3F492B004D0574 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		C61418322F3F4A77004D0574 /* KonitFlashWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = KonitFlashWidgetExtension.entitlements; sourceTree = "<group>"; };
+		C61418392F3F4B0B004D0574 /* KonitFlashWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = KonitFlashWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		C67AE0292F2EF42400B2A92C /* KonitFlash.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KonitFlash.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C67AE03A2F2EF42600B2A92C /* KonitFlashTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KonitFlashTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C67AE0442F2EF42600B2A92C /* KonitFlashUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KonitFlashUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		C61418492F3F4B0D004D0574 /* Exceptions for "KonitFlashWidget" folder in "KonitFlashWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = C61418382F3F4B0B004D0574 /* KonitFlashWidgetExtension */;
+		};
 		C67AE04C2F2EF42600B2A92C /* Exceptions for "KonitFlash" folder in "KonitFlash" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -40,6 +76,19 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		C61418142F3F492B004D0574 /* KonitFlashWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = KonitFlashWidget;
+			sourceTree = "<group>";
+		};
+		C614183C2F3F4B0B004D0574 /* KonitFlashWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				C61418492F3F4B0D004D0574 /* Exceptions for "KonitFlashWidget" folder in "KonitFlashWidgetExtension" target */,
+			);
+			path = KonitFlashWidget;
+			sourceTree = "<group>";
+		};
 		C67AE02B2F2EF42400B2A92C /* KonitFlash */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -61,6 +110,15 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		C61418362F3F4B0B004D0574 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C614183B2F3F4B0B004D0574 /* SwiftUI.framework in Frameworks */,
+				C614183A2F3F4B0B004D0574 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C67AE0262F2EF42400B2A92C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -85,12 +143,25 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C614180F2F3F492B004D0574 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C61418102F3F492B004D0574 /* WidgetKit.framework */,
+				C61418122F3F492B004D0574 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		C67AE0202F2EF42400B2A92C = {
 			isa = PBXGroup;
 			children = (
+				C61418322F3F4A77004D0574 /* KonitFlashWidgetExtension.entitlements */,
 				C67AE02B2F2EF42400B2A92C /* KonitFlash */,
 				C67AE03D2F2EF42600B2A92C /* KonitFlashTests */,
 				C67AE0472F2EF42600B2A92C /* KonitFlashUITests */,
+				C61418142F3F492B004D0574 /* KonitFlashWidget */,
+				C614183C2F3F4B0B004D0574 /* KonitFlashWidget */,
+				C614180F2F3F492B004D0574 /* Frameworks */,
 				C67AE02A2F2EF42400B2A92C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -101,6 +172,7 @@
 				C67AE0292F2EF42400B2A92C /* KonitFlash.app */,
 				C67AE03A2F2EF42600B2A92C /* KonitFlashTests.xctest */,
 				C67AE0442F2EF42600B2A92C /* KonitFlashUITests.xctest */,
+				C61418392F3F4B0B004D0574 /* KonitFlashWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -108,6 +180,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		C61418382F3F4B0B004D0574 /* KonitFlashWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C61418462F3F4B0D004D0574 /* Build configuration list for PBXNativeTarget "KonitFlashWidgetExtension" */;
+			buildPhases = (
+				C61418352F3F4B0B004D0574 /* Sources */,
+				C61418362F3F4B0B004D0574 /* Frameworks */,
+				C61418372F3F4B0B004D0574 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				C614183C2F3F4B0B004D0574 /* KonitFlashWidget */,
+			);
+			name = KonitFlashWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = KonitFlashWidgetExtension;
+			productReference = C61418392F3F4B0B004D0574 /* KonitFlashWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		C67AE0282F2EF42400B2A92C /* KonitFlash */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C67AE04D2F2EF42600B2A92C /* Build configuration list for PBXNativeTarget "KonitFlash" */;
@@ -115,10 +209,12 @@
 				C67AE0252F2EF42400B2A92C /* Sources */,
 				C67AE0262F2EF42400B2A92C /* Frameworks */,
 				C67AE0272F2EF42400B2A92C /* Resources */,
+				C61418232F3F492D004D0574 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				C61418452F3F4B0D004D0574 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				C67AE02B2F2EF42400B2A92C /* KonitFlash */,
@@ -186,6 +282,9 @@
 				LastSwiftUpdateCheck = 2620;
 				LastUpgradeCheck = 2620;
 				TargetAttributes = {
+					C61418382F3F4B0B004D0574 = {
+						CreatedOnToolsVersion = 26.2;
+					};
 					C67AE0282F2EF42400B2A92C = {
 						CreatedOnToolsVersion = 26.2;
 					};
@@ -219,11 +318,19 @@
 				C67AE0282F2EF42400B2A92C /* KonitFlash */,
 				C67AE0392F2EF42600B2A92C /* KonitFlashTests */,
 				C67AE0432F2EF42600B2A92C /* KonitFlashUITests */,
+				C61418382F3F4B0B004D0574 /* KonitFlashWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		C61418372F3F4B0B004D0574 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C67AE0272F2EF42400B2A92C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -248,6 +355,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		C61418352F3F4B0B004D0574 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C67AE0252F2EF42400B2A92C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -272,6 +386,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		C61418452F3F4B0D004D0574 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C61418382F3F4B0B004D0574 /* KonitFlashWidgetExtension */;
+			targetProxy = C61418442F3F4B0D004D0574 /* PBXContainerItemProxy */;
+		};
 		C67AE03C2F2EF42600B2A92C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C67AE0282F2EF42400B2A92C /* KonitFlash */;
@@ -285,6 +404,66 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		C61418472F3F4B0D004D0574 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = H24UL983G7;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = KonitFlashWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = KonitFlashWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = geunil.KonitFlash.KonitFlashWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C61418482F3F4B0D004D0574 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = H24UL983G7;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = KonitFlashWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = KonitFlashWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = geunil.KonitFlash.KonitFlashWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		C67AE04E2F2EF42600B2A92C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -569,6 +748,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		C61418462F3F4B0D004D0574 /* Build configuration list for PBXNativeTarget "KonitFlashWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C61418472F3F4B0D004D0574 /* Debug */,
+				C61418482F3F4B0D004D0574 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		C67AE0242F2EF42400B2A92C /* Build configuration list for PBXProject "KonitFlash" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

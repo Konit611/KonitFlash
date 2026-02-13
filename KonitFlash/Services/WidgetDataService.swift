@@ -2,7 +2,7 @@ import Foundation
 import SwiftData
 import WidgetKit
 
-struct WidgetDeckInfo: Codable {
+struct WidgetDeckInfo: Codable, Equatable {
     let id: UUID
     let name: String
     let colorTag: String
@@ -10,14 +10,21 @@ struct WidgetDeckInfo: Codable {
     let totalCards: Int
 }
 
-struct WidgetData: Codable {
+struct WidgetData: Codable, Equatable {
     let dueCardCount: Int
     let streakDays: Int
-    let overdueCount: Int
     let topDecks: [WidgetDeckInfo]
     let mostUrgentDeckID: UUID?
     let updatedAt: Date
     let languageCode: String
+
+    static func == (lhs: WidgetData, rhs: WidgetData) -> Bool {
+        lhs.dueCardCount == rhs.dueCardCount
+        && lhs.streakDays == rhs.streakDays
+        && lhs.topDecks == rhs.topDecks
+        && lhs.mostUrgentDeckID == rhs.mostUrgentDeckID
+        && lhs.languageCode == rhs.languageCode
+    }
 }
 
 enum WidgetDataService {
@@ -31,7 +38,6 @@ enum WidgetDataService {
         let now = Date()
         let allCards = decks.flatMap { $0.cards ?? [] }
         let dueCardCount = allCards.filter { $0.dueDate <= now }.count
-        let overdueCount = allCards.filter { $0.dueDate < now }.count
         let streakDays = computeStreak(logs: logs)
 
         let sortedDecks = decks
@@ -56,7 +62,6 @@ enum WidgetDataService {
         let data = WidgetData(
             dueCardCount: dueCardCount,
             streakDays: streakDays,
-            overdueCount: overdueCount,
             topDecks: topDecks,
             mostUrgentDeckID: mostUrgentDeckID,
             updatedAt: now,
@@ -64,11 +69,19 @@ enum WidgetDataService {
         )
 
         guard let defaults = UserDefaults(suiteName: suiteName) else { return }
+
+        if let previousData = defaults.data(forKey: dataKey),
+           let previous = try? JSONDecoder().decode(WidgetData.self, from: previousData),
+           previous == data {
+            return
+        }
+
         do {
             let encoded = try JSONEncoder().encode(data)
             defaults.set(encoded, forKey: dataKey)
         } catch {
             print("[KonitFlash] Failed to encode widget data: \(error)")
+            return
         }
 
         WidgetCenter.shared.reloadAllTimelines()

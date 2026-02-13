@@ -37,7 +37,8 @@ struct KonitFlashApp: App {
     private func handleDeepLink(_ url: URL) {
         guard url.scheme == "konitflash" else { return }
 
-        switch url.host {
+        let host = url.host(percentEncoded: false)
+        switch host {
         case "study":
             let pathComponent = url.pathComponents.dropFirst().first ?? ""
             guard let deckID = UUID(uuidString: pathComponent) else { return }

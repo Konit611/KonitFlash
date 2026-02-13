@@ -14,7 +14,6 @@ struct WidgetDeckInfo: Codable {
 struct WidgetData: Codable {
     let dueCardCount: Int
     let streakDays: Int
-    let overdueCount: Int
     let topDecks: [WidgetDeckInfo]
     let mostUrgentDeckID: UUID?
     let updatedAt: Date
@@ -40,7 +39,6 @@ struct StudyTimelineProvider: TimelineProvider {
             data: WidgetData(
                 dueCardCount: 12,
                 streakDays: 3,
-                overdueCount: 5,
                 topDecks: [
                     WidgetDeckInfo(id: UUID(), name: "Japanese N3", colorTag: "pink", dueCards: 5, totalCards: 100),
                     WidgetDeckInfo(id: UUID(), name: "Swift API", colorTag: "green", dueCards: 4, totalCards: 50),
@@ -86,15 +84,6 @@ struct KonitFlashWidget: Widget {
         .configurationDisplayName("Today's Study")
         .description("See your due cards and study streak at a glance.")
         .supportedFamilies([.systemSmall, .systemMedium, .accessoryRectangular])
-    }
-}
-
-// MARK: - Widget Bundle
-
-@main
-struct KonitFlashWidgetBundle: WidgetBundle {
-    var body: some Widget {
-        KonitFlashWidget()
     }
 }
 

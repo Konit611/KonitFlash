@@ -42,7 +42,7 @@ enum WidgetStrings {
         case "ko": return "장"
         case "ja": return "枚"
         case "zh-Hans": return "张"
-        default: return "due"
+        default: return " due"
         }
     }
 

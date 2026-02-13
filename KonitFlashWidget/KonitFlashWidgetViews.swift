@@ -23,11 +23,14 @@ struct KonitFlashWidgetEntryView: View {
 
 // MARK: - Deep Link Helper
 
+private let fallbackURL = URL(string: "konitflash://home")!
+
 private func studyDeepLink(for data: WidgetData?) -> URL {
-    if let deckID = data?.mostUrgentDeckID {
-        return URL(string: "konitflash://study/\(deckID.uuidString)")!
+    guard let deckID = data?.mostUrgentDeckID,
+          let url = URL(string: "konitflash://study/\(deckID.uuidString)") else {
+        return fallbackURL
     }
-    return URL(string: "konitflash://home")!
+    return url
 }
 
 // MARK: - Small Widget
@@ -233,17 +236,29 @@ struct LockScreenWidgetView: View {
                 if data.dueCardCount > 0 {
                     HStack(spacing: 4) {
                         if data.streakDays > 0 {
-                            Text("🔥 \(data.streakDays)")
-                                .font(.system(size: 13, weight: .semibold))
+                            HStack(spacing: 2) {
+                                Image(systemName: "flame.fill")
+                                    .font(.system(size: 11, weight: .semibold))
+                                Text("\(data.streakDays)")
+                                    .font(.system(size: 13, weight: .semibold))
+                            }
                             Text("·")
                                 .font(.system(size: 13))
                         }
-                        Text("📚 \(data.dueCardCount)\(WidgetStrings.dueLabel(lang: lang))")
-                            .font(.system(size: 13, weight: .semibold))
+                        HStack(spacing: 2) {
+                            Image(systemName: "book.fill")
+                                .font(.system(size: 11, weight: .semibold))
+                            Text("\(data.dueCardCount)\(WidgetStrings.dueLabel(lang: lang))")
+                                .font(.system(size: 13, weight: .semibold))
+                        }
                     }
                 } else {
-                    Text("✅ \(WidgetStrings.allCaughtUp(lang: lang))")
-                        .font(.system(size: 13, weight: .semibold))
+                    HStack(spacing: 2) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 11, weight: .semibold))
+                        Text(WidgetStrings.allCaughtUp(lang: lang))
+                            .font(.system(size: 13, weight: .semibold))
+                    }
                 }
             }
             .widgetURL(studyDeepLink(for: data))
