@@ -97,7 +97,6 @@ struct KonitFlashWidget: Widget {
         data: WidgetData(
             dueCardCount: 12,
             streakDays: 3,
-            overdueCount: 5,
             topDecks: [],
             mostUrgentDeckID: UUID(),
             updatedAt: Date(),
@@ -115,7 +114,6 @@ struct KonitFlashWidget: Widget {
         data: WidgetData(
             dueCardCount: 12,
             streakDays: 3,
-            overdueCount: 5,
             topDecks: [
                 WidgetDeckInfo(id: UUID(), name: "Japanese N3", colorTag: "pink", dueCards: 5, totalCards: 100),
                 WidgetDeckInfo(id: UUID(), name: "Swift API", colorTag: "green", dueCards: 4, totalCards: 50),
@@ -136,7 +134,6 @@ struct KonitFlashWidget: Widget {
         data: WidgetData(
             dueCardCount: 12,
             streakDays: 3,
-            overdueCount: 5,
             topDecks: [],
             mostUrgentDeckID: UUID(),
             updatedAt: Date(),

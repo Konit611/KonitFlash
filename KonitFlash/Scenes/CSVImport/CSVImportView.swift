@@ -45,6 +45,7 @@ struct CSVImportView: View {
         .background(Color.appBackground)
         .navigationBarHidden(true)
         .onAppear { presenter.configure(modelContext: modelContext, deckID: deckID) }
+        .onDisappear { WidgetDataService.writeWidgetData(from: modelContext) }
         .fileImporter(
             isPresented: $showFilePicker,
             allowedContentTypes: [.commaSeparatedText, .tabSeparatedText, .plainText],

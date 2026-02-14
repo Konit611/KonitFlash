@@ -20,8 +20,11 @@ struct StatsSectionView: View {
                     .frame(maxWidth: .infinity)
             }
         }
-        .aspectRatio(isRegular ? 5.5 : 2.15, contentMode: .fit)
+        .frame(height: isRegular ? 260 : nil)
+        .aspectRatio(isRegular ? nil : 2.15, contentMode: .fit)
     }
+
+    // MARK: - Cards
 
     private var streakCard: some View {
         VStack(spacing: 0) {
@@ -36,6 +39,8 @@ struct StatsSectionView: View {
             Text(stats.streakText)
                 .font(.system(size: isRegular ? 64 : 36, weight: .bold))
                 .foregroundStyle(.black)
+                .minimumScaleFactor(0.5)
+                .lineLimit(1)
             Text("STREAK", bundle: LanguageManager.shared.bundle)
                 .font(.system(size: isRegular ? 20 : 14, weight: .bold))
                 .foregroundStyle(Color(hex: 0x7C6172))
@@ -50,6 +55,8 @@ struct StatsSectionView: View {
                 .padding(.horizontal, isRegular ? 20 : 12)
                 .padding(.vertical, isRegular ? 8 : 4)
                 .background(Color.deckBadge, in: RoundedRectangle(cornerRadius: isRegular ? 8 : 6))
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
         }
         .padding(isRegular ? 24 : 14)
         .frame(maxWidth: .infinity, maxHeight: .infinity)

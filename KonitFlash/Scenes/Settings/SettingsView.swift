@@ -4,6 +4,7 @@ struct SettingsView: View {
     @StateObject private var presenter: SettingsPresenter
     @Environment(\.dismiss) private var dismiss
     @Environment(\.horizontalSizeClass) private var sizeClass
+    @Environment(\.modelContext) private var modelContext
 
     private var isRegular: Bool { sizeClass == .regular }
 
@@ -47,6 +48,7 @@ struct SettingsView: View {
                 ForEach(Array(presenter.viewState.languages.enumerated()), id: \.element.id) { index, language in
                     Button {
                         presenter.selectLanguage(language.id)
+                        WidgetDataService.writeWidgetData(from: modelContext)
                     } label: {
                         HStack {
                             Text(language.name)

@@ -80,6 +80,7 @@ struct DeckDetailView: View {
         .background(Color.appBackground)
         .navigationBarHidden(true)
         .onAppear { presenter.configure(modelContext: modelContext, deckID: deckID) }
+        .onDisappear { WidgetDataService.writeWidgetData(from: modelContext) }
         .navigationDestination(isPresented: Binding(
             get: { navTarget != nil },
             set: { if !$0 { navTarget = nil } }

@@ -36,6 +36,7 @@ struct AddCardView: View {
         .background(Color.appBackground)
         .navigationBarHidden(true)
         .onAppear { presenter.configure(modelContext: modelContext, deckID: deckID, editingCardID: editingCardID) }
+        .onDisappear { WidgetDataService.writeWidgetData(from: modelContext) }
     }
 
     // MARK: - Header

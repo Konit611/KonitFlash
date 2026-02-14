@@ -48,6 +48,10 @@ struct HomeView: View {
             presenter.configure(modelContext: modelContext)
             WidgetDataService.writeWidgetData(from: modelContext)
         }
+        .refreshable {
+            presenter.loadData()
+            WidgetDataService.writeWidgetData(from: modelContext)
+        }
         .confirmationDialog(
             "Delete \"\(deckToDelete?.name ?? "")\"?",
             isPresented: Binding(

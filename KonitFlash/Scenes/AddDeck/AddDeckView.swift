@@ -30,6 +30,7 @@ struct AddDeckView: View {
         .background(Color.appBackground)
         .navigationBarHidden(true)
         .onAppear { presenter.configure(modelContext: modelContext, editingDeckID: editingDeckID) }
+        .onDisappear { WidgetDataService.writeWidgetData(from: modelContext) }
     }
 
     // MARK: - Header
