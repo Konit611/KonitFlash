@@ -18,25 +18,30 @@ final class OverdueListPresenter: ObservableObject {
 
     func loadData() {
         guard let interactor else { return }
-        let results = interactor.fetchOverdueCards()
+        let results = interactor.fetchOverdueDecks()
 
         let formatter = DateFormatter()
         formatter.dateStyle = .short
-
         let bundle = LanguageManager.shared.bundle
-        let cards = results.map { item in
-            OverdueCardRowData(
-                id: item.card.id,
-                front: item.card.front,
-                deckName: item.deckName,
-                dueDateText: String(localized: "Due: \(formatter.string(from: item.card.dueDate))", bundle: bundle),
-                box: item.card.box
+
+        let groups = results.map { deck in
+            OverdueDeckGroup(
+                id: deck.deckID,
+                deckName: deck.deckName,
+                cards: deck.cards.map { card in
+                    OverdueCardRowData(
+                        id: card.id,
+                        front: card.front,
+                        dueDateText: String(localized: "Due: \(formatter.string(from: card.dueDate))", bundle: bundle),
+                        box: card.box
+                    )
+                }
             )
         }
 
         viewState = OverdueListViewState(
-            cards: cards,
-            isEmpty: cards.isEmpty
+            deckGroups: groups,
+            isEmpty: groups.isEmpty
         )
     }
 }

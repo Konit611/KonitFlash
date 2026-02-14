@@ -110,6 +110,7 @@ struct DeckCardView: View {
                     HStack(spacing: 4) {
                         Text("Start", bundle: LanguageManager.shared.bundle)
                             .font(.system(size: isRegular ? 18 : 15, weight: .semibold))
+                            .lineLimit(1)
                         Image(systemName: "arrow.right")
                             .font(.system(size: isRegular ? 13 : 11, weight: .semibold))
                     }
@@ -118,6 +119,7 @@ struct DeckCardView: View {
                     .padding(.vertical, isRegular ? 8 : 6)
                     .background(.white, in: RoundedRectangle(cornerRadius: isRegular ? 14 : 12))
                 }
+                .fixedSize()
             }
             .padding(.horizontal, isRegular ? 16 : 12)
             .padding(.vertical, isRegular ? 12 : 10)

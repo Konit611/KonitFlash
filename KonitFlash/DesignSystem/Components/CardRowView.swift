@@ -17,9 +17,10 @@ struct CardRowView: View {
                 .background(Color.learnedGreen, in: RoundedRectangle(cornerRadius: 8))
 
             VStack(alignment: .leading, spacing: isRegular ? 6 : 4) {
-                Text(card.name)
+                SmartText(card.name)
                     .font(.system(size: isRegular ? 30 : 20, weight: .bold))
-                    .foregroundStyle(.black)
+                    .foregroundColor(.black)
+                    .lineLimit(2)
                 Text(card.dueDateText)
                     .font(.system(size: isRegular ? 16 : 12))
                     .foregroundStyle(Color(hex: 0x555555))

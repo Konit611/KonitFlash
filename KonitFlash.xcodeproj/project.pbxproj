@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		C614183A2F3F4B0B004D0574 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C61418102F3F492B004D0574 /* WidgetKit.framework */; };
 		C614183B2F3F4B0B004D0574 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C61418122F3F492B004D0574 /* SwiftUI.framework */; };
+		C61418582F405648004D0574 /* LaTeXSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = C61418572F405648004D0574 /* LaTeXSwiftUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -123,6 +124,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C61418582F405648004D0574 /* LaTeXSwiftUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -221,6 +223,7 @@
 			);
 			name = KonitFlash;
 			packageProductDependencies = (
+				C61418572F405648004D0574 /* LaTeXSwiftUI */,
 			);
 			productName = KonitFlash;
 			productReference = C67AE0292F2EF42400B2A92C /* KonitFlash.app */;
@@ -310,6 +313,9 @@
 			);
 			mainGroup = C67AE0202F2EF42400B2A92C;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				C61418562F405519004D0574 /* XCRemoteSwiftPackageReference "LaTeXSwiftUI" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C67AE02A2F2EF42400B2A92C /* Products */;
 			projectDirPath = "";
@@ -794,6 +800,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C61418562F405519004D0574 /* XCRemoteSwiftPackageReference "LaTeXSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/colinc86/LaTeXSwiftUI";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C61418572F405648004D0574 /* LaTeXSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C61418562F405519004D0574 /* XCRemoteSwiftPackageReference "LaTeXSwiftUI" */;
+			productName = LaTeXSwiftUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C67AE0212F2EF42400B2A92C /* Project object */;
 }

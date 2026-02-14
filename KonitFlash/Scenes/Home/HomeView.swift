@@ -7,6 +7,7 @@ struct HomeView: View {
     @Environment(\.horizontalSizeClass) private var sizeClass
     @Environment(\.modelContext) private var modelContext
     @State private var deckToDelete: DeckViewData?
+    @State private var showNoDueCardsAlert = false
 
     private var isRegular: Bool { sizeClass == .regular }
 
@@ -19,12 +20,7 @@ struct HomeView: View {
                     OverdueBanner(
                         count: presenter.viewState.overdueCount,
                         isRegular: isRegular,
-                        onCatchUp: {
-                            if let deckID = presenter.viewState.firstOverdueDeckID {
-                                path.append(NavigationRoute.flashCard(deckID: deckID))
-                            }
-                        },
-                        onOverdueList: {
+                        onTap: {
                             path.append(NavigationRoute.overdueList)
                         }
                     )
@@ -69,6 +65,14 @@ struct HomeView: View {
         } message: {
             Text("This deck and all its cards will be permanently deleted.", bundle: LanguageManager.shared.bundle)
         }
+        .alert(
+            String(localized: "No Overdue Cards", bundle: LanguageManager.shared.bundle),
+            isPresented: $showNoDueCardsAlert
+        ) {
+            Button(String(localized: "Done", bundle: LanguageManager.shared.bundle), role: .cancel) {}
+        } message: {
+            Text("You've completed all reviews for today", bundle: LanguageManager.shared.bundle)
+        }
     }
 
     // MARK: - Header
@@ -82,7 +86,13 @@ struct HomeView: View {
         } label: {
             DeckCardView(
                 deck: deck,
-                onStartTap: { path.append(NavigationRoute.flashCard(deckID: deck.id)) },
+                onStartTap: {
+                    if deck.dueCards > 0 {
+                        path.append(NavigationRoute.flashCard(deckID: deck.id))
+                    } else {
+                        showNoDueCardsAlert = true
+                    }
+                },
                 onEditTap: { path.append(NavigationRoute.editDeck(deckID: deck.id)) },
                 onDeleteTap: { deckToDelete = deck }
             )

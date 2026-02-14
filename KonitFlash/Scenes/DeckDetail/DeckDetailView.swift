@@ -10,6 +10,7 @@ struct DeckDetailView: View {
     private let deckID: UUID
     @State private var cardToDelete: CardRowData?
     @State private var navTarget: DetailNavTarget?
+    @State private var showNoDueCardsAlert = false
     private var isRegular: Bool { sizeClass == .regular }
 
     private enum DetailNavTarget: Hashable {
@@ -113,6 +114,14 @@ struct DeckDetailView: View {
         } message: {
             Text("This card will be permanently deleted.", bundle: LanguageManager.shared.bundle)
         }
+        .alert(
+            String(localized: "No Overdue Cards", bundle: LanguageManager.shared.bundle),
+            isPresented: $showNoDueCardsAlert
+        ) {
+            Button(String(localized: "Done", bundle: LanguageManager.shared.bundle), role: .cancel) {}
+        } message: {
+            Text("You've completed all reviews for today", bundle: LanguageManager.shared.bundle)
+        }
     }
 
     private var deckInfoDots: some View {
@@ -128,7 +137,11 @@ struct DeckDetailView: View {
     }
 
     private func startStudy() {
-        navTarget = .flashCard
+        if presenter.viewState.dueTodayCount > 0 {
+            navTarget = .flashCard
+        } else {
+            showNoDueCardsAlert = true
+        }
     }
 
     // MARK: - Header

@@ -8,21 +8,32 @@ final class OverdueListInteractor {
         self.modelContext = modelContext
     }
 
-    func fetchOverdueCards() -> [(card: Card, deckName: String)] {
+    struct OverdueDeckResult {
+        let deckID: UUID
+        let deckName: String
+        let cards: [Card]
+    }
+
+    func fetchOverdueDecks() -> [OverdueDeckResult] {
         let descriptor = FetchDescriptor<Deck>()
         guard let decks = try? modelContext.fetch(descriptor) else { return [] }
 
         let now = Date()
-        var results: [(card: Card, deckName: String)] = []
+        var results: [OverdueDeckResult] = []
 
         for deck in decks {
-            let overdueCards = (deck.cards ?? []).filter { $0.dueDate < now }
-            for card in overdueCards {
-                results.append((card: card, deckName: deck.name))
+            let overdueCards = (deck.cards ?? [])
+                .filter { $0.dueDate < now }
+                .sorted { $0.dueDate < $1.dueDate }
+            if !overdueCards.isEmpty {
+                results.append(OverdueDeckResult(
+                    deckID: deck.id,
+                    deckName: deck.name,
+                    cards: overdueCards
+                ))
             }
         }
 
-        results.sort { $0.card.dueDate < $1.card.dueDate }
         return results
     }
 }

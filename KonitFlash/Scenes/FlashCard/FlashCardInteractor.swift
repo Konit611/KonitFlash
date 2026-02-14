@@ -57,10 +57,12 @@ final class FlashCardInteractor {
         }
 
         let now = Date()
+        let limit = SettingsInteractor.currentSessionCardLimit()
+        let effectiveLimit = limit > 0 ? limit : Int.max
         let dueCards = (deck.cards ?? [])
             .filter { $0.dueDate <= now }
             .sorted { $0.dueDate < $1.dueDate }
-            .prefix(20)
+            .prefix(effectiveLimit)
 
         reviewQueue = Array(dueCards)
         totalSteps = reviewQueue.count

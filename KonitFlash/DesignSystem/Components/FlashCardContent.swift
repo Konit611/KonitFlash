@@ -1,3 +1,4 @@
+import LaTeXSwiftUI
 import SwiftUI
 
 struct FlashCardContent: View {
@@ -36,9 +37,9 @@ struct FlashCardContent: View {
     private func cardFace(text: String, isFront: Bool) -> some View {
         VStack(spacing: isRegular ? 16 : 12) {
             Spacer()
-            Text(text)
+            SmartText(text)
                 .font(.system(size: isFront ? (isRegular ? 32 : 24) : (isRegular ? 28 : 20), weight: isFront ? .bold : .medium))
-                .foregroundStyle(.black)
+                .foregroundColor(.black)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, isRegular ? 40 : 24)
             if !isFlipped && isFront {
@@ -51,6 +52,28 @@ struct FlashCardContent: View {
         .frame(maxWidth: .infinity)
         .frame(height: isRegular ? 360 : 260)
         .background(.white, in: RoundedRectangle(cornerRadius: 18))
+    }
+}
+
+// MARK: - LaTeX-aware Text
+
+private let latexPattern = /\$[^$]+\$/
+
+struct SmartText: View {
+    let text: String
+    private let hasLaTeX: Bool
+
+    init(_ text: String) {
+        self.text = text
+        self.hasLaTeX = text.contains(latexPattern)
+    }
+
+    var body: some View {
+        if hasLaTeX {
+            LaTeX(text)
+        } else {
+            Text(text)
+        }
     }
 }
 
