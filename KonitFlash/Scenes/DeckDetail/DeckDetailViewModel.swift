@@ -1,5 +1,22 @@
 import SwiftUI
 
+enum CardFilter: String, CaseIterable {
+    case all = "All"
+    case due = "Due"
+    case newCards = "New"
+    case learned = "Learned"
+
+    var localizedLabel: String {
+        let bundle = LanguageManager.shared.bundle
+        switch self {
+        case .all: return String(localized: "All", bundle: bundle)
+        case .due: return String(localized: "Due", bundle: bundle)
+        case .newCards: return String(localized: "New", bundle: bundle)
+        case .learned: return String(localized: "Learned", bundle: bundle)
+        }
+    }
+}
+
 struct DeckDetailViewState {
     var deckName: String = ""
     var deckDescription: String = ""

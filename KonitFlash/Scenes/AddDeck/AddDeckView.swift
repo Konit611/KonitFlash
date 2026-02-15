@@ -46,7 +46,7 @@ struct AddDeckView: View {
 
     private var formCard: some View {
         VStack(alignment: .leading, spacing: isRegular ? 24 : 18) {
-            FormFieldView(
+            FormTextField(
                 label: String(localized: "Deck Name", bundle: LanguageManager.shared.bundle),
                 text: Binding(
                     get: { presenter.viewState.name },
@@ -55,14 +55,13 @@ struct AddDeckView: View {
                 placeholder: String(localized: "Enter deck name", bundle: LanguageManager.shared.bundle)
             )
 
-            FormFieldView(
+            FormTextEditor(
                 label: String(localized: "Description", bundle: LanguageManager.shared.bundle),
                 text: Binding(
                     get: { presenter.viewState.description },
                     set: { presenter.updateDescription($0) }
                 ),
-                placeholder: String(localized: "Enter description", bundle: LanguageManager.shared.bundle),
-                isMultiline: true
+                placeholder: String(localized: "Enter description", bundle: LanguageManager.shared.bundle)
             )
 
             ColorTagPicker(
@@ -80,7 +79,11 @@ struct AddDeckView: View {
 
     private var createButton: some View {
         Button {
-            presenter.saveDeck()
+            if presenter.viewState.isEditMode {
+                presenter.updateDeck()
+            } else {
+                presenter.createDeck()
+            }
             dismiss()
         } label: {
             Text(presenter.viewState.buttonTitle)

@@ -1,5 +1,8 @@
 import Foundation
+import os
 import SwiftData
+
+private let logger = Logger(subsystem: "geunil.KonitFlash", category: "AddDeckInteractor")
 
 struct AddDeckInput {
     let name: String
@@ -36,7 +39,7 @@ final class AddDeckInteractor {
         do {
             try modelContext.save()
         } catch {
-            print("[KonitFlash] Failed to save deck: \(error)")
+            logger.error("Failed to save deck: \(error)")
         }
     }
 
@@ -50,7 +53,7 @@ final class AddDeckInteractor {
         do {
             try modelContext.save()
         } catch {
-            print("[KonitFlash] Failed to update deck: \(error)")
+            logger.error("Failed to update deck: \(error)")
         }
     }
 }

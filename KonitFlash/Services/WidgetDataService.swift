@@ -1,6 +1,9 @@
 import Foundation
+import os
 import SwiftData
 import WidgetKit
+
+private let logger = Logger(subsystem: "geunil.KonitFlash", category: "WidgetDataService")
 
 struct WidgetDeckInfo: Codable, Equatable {
     let id: UUID
@@ -38,7 +41,7 @@ enum WidgetDataService {
         let now = Date()
         let allCards = decks.flatMap { $0.cards ?? [] }
         let dueCardCount = allCards.filter { $0.dueDate <= now }.count
-        let streakDays = computeStreak(logs: logs)
+        let streakDays = StudyLog.computeStreak(from: logs)
 
         let sortedDecks = decks
             .map { deck -> WidgetDeckInfo in
@@ -80,7 +83,7 @@ enum WidgetDataService {
             let encoded = try JSONEncoder().encode(data)
             defaults.set(encoded, forKey: dataKey)
         } catch {
-            print("[KonitFlash] Failed to encode widget data: \(error)")
+            logger.error("Failed to encode widget data: \(error)")
             return
         }
 
@@ -99,29 +102,4 @@ enum WidgetDataService {
         return (try? modelContext.fetch(descriptor)) ?? []
     }
 
-    private static func computeStreak(logs: [StudyLog]) -> Int {
-        guard !logs.isEmpty else { return 0 }
-
-        let calendar = Calendar.current
-        let studyDates = Set(logs.map { calendar.startOfDay(for: $0.studiedAt) })
-
-        var streak = 0
-        var checkDate = calendar.startOfDay(for: Date())
-
-        if !studyDates.contains(checkDate) {
-            guard let previous = calendar.date(byAdding: .day, value: -1, to: checkDate) else { return 0 }
-            checkDate = previous
-            if !studyDates.contains(checkDate) {
-                return 0
-            }
-        }
-
-        while studyDates.contains(checkDate) {
-            streak += 1
-            guard let previous = calendar.date(byAdding: .day, value: -1, to: checkDate) else { break }
-            checkDate = previous
-        }
-
-        return streak
-    }
 }

@@ -1,16 +1,12 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @StateObject private var presenter: SettingsPresenter
+    @StateObject private var presenter = SettingsPresenter()
     @Environment(\.dismiss) private var dismiss
     @Environment(\.horizontalSizeClass) private var sizeClass
     @Environment(\.modelContext) private var modelContext
 
     private var isRegular: Bool { sizeClass == .regular }
-
-    init() {
-        _presenter = StateObject(wrappedValue: SettingsPresenter())
-    }
 
     var body: some View {
         ScrollView {
@@ -27,6 +23,7 @@ struct SettingsView: View {
         }
         .background(Color.appBackground)
         .navigationBarHidden(true)
+        .onAppear { presenter.configure() }
     }
 
     // MARK: - Header

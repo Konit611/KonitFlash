@@ -1,5 +1,8 @@
 import Foundation
+import os
 import SwiftData
+
+private let logger = Logger(subsystem: "geunil.KonitFlash", category: "CSVImportInteractor")
 
 final class CSVImportInteractor {
     private let modelContext: ModelContext
@@ -51,7 +54,7 @@ final class CSVImportInteractor {
         do {
             try modelContext.save()
         } catch {
-            print("[KonitFlash] Failed to save imported cards: \(error)")
+            logger.error("Failed to save imported cards: \(error)")
         }
         return imported
     }

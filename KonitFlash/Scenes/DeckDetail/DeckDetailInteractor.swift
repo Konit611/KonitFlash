@@ -1,5 +1,8 @@
 import Foundation
+import os
 import SwiftData
+
+private let logger = Logger(subsystem: "geunil.KonitFlash", category: "DeckDetailInteractor")
 
 struct DeckDetailData {
     let deck: Deck
@@ -46,7 +49,7 @@ final class DeckDetailInteractor {
         do {
             try modelContext.save()
         } catch {
-            print("[KonitFlash] Failed to delete card: \(error)")
+            logger.error("Failed to delete card: \(error)")
         }
     }
 }

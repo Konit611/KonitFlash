@@ -8,10 +8,16 @@ enum CSVImportPhase {
     case error
 }
 
+struct PreviewCardData: Identifiable {
+    let id: Int
+    let front: String
+    let back: String
+}
+
 struct CSVImportViewState {
     var phase: CSVImportPhase = .selectFile
     var deckName: String = ""
-    var previewCards: [(front: String, back: String)] = []
+    var previewCards: [PreviewCardData] = []
     var totalCount: Int = 0
     var skippedCount: Int = 0
     var duplicateCount: Int = 0

@@ -1,5 +1,8 @@
 import Foundation
+import os
 import SwiftData
+
+private let logger = Logger(subsystem: "geunil.KonitFlash", category: "HomeInteractor")
 
 struct HomeData {
     let stats: HomeStats
@@ -31,7 +34,7 @@ final class HomeInteractor {
         do {
             try modelContext.save()
         } catch {
-            print("[KonitFlash] Failed to delete deck: \(error)")
+            logger.error("Failed to delete deck: \(error)")
         }
     }
 
@@ -54,7 +57,7 @@ final class HomeInteractor {
         let learnedCount = allCards.filter { $0.repetitions > 0 }.count
 
         let reviewCount = allLogs.count
-        let streakDays = computeStreak(logs: allLogs)
+        let streakDays = StudyLog.computeStreak(from: allLogs)
 
         return HomeStats(
             streakDays: streakDays,
@@ -62,32 +65,6 @@ final class HomeInteractor {
             reviewCount: reviewCount,
             overdueCount: overdueCount
         )
-    }
-
-    private func computeStreak(logs: [StudyLog]) -> Int {
-        guard !logs.isEmpty else { return 0 }
-
-        let calendar = Calendar.current
-        let studyDates = Set(logs.map { calendar.startOfDay(for: $0.studiedAt) })
-
-        var streak = 0
-        var checkDate = calendar.startOfDay(for: Date())
-
-        if !studyDates.contains(checkDate) {
-            guard let previous = calendar.date(byAdding: .day, value: -1, to: checkDate) else { return 0 }
-            checkDate = previous
-            if !studyDates.contains(checkDate) {
-                return 0
-            }
-        }
-
-        while studyDates.contains(checkDate) {
-            streak += 1
-            guard let previous = calendar.date(byAdding: .day, value: -1, to: checkDate) else { break }
-            checkDate = previous
-        }
-
-        return streak
     }
 
     private func findFirstOverdueDeckID(decks: [Deck]) -> UUID? {
@@ -99,35 +76,43 @@ final class HomeInteractor {
 
     private func computeWeeklyActivity(allLogs: [StudyLog]) -> [DayActivity] {
         let calendar = Calendar.current
-        let today = calendar.startOfDay(for: Date())
-        let weekday = calendar.component(.weekday, from: today)
-        let daysFromMonday = (weekday + 5) % 7
-        guard let monday = calendar.date(byAdding: .day, value: -daysFromMonday, to: today) else {
-            return []
-        }
+        let monday = mondayOfCurrentWeek(calendar: calendar)
+        guard let monday else { return [] }
 
-        let formatter = DateFormatter()
-        formatter.locale = LanguageManager.shared.locale
-        let dayLabels = (0..<7).map { offset -> String in
-            guard let date = calendar.date(byAdding: .day, value: offset, to: monday) else { return "" }
-            formatter.dateFormat = "EEE"
-            return formatter.string(from: date)
-        }
+        let dayLabels = weekdayLabels(from: monday, calendar: calendar)
 
         return (0..<7).map { offset in
             guard let date = calendar.date(byAdding: .day, value: offset, to: monday) else {
                 return DayActivity(dayLabel: dayLabels[offset], studiedCards: 0, isToday: false)
             }
-            guard let nextDate = calendar.date(byAdding: .day, value: 1, to: date) else {
-                return DayActivity(dayLabel: dayLabels[offset], studiedCards: 0, isToday: false)
-            }
-            let logsForDay = allLogs.filter { $0.studiedAt >= date && $0.studiedAt < nextDate }
-            let isToday = calendar.isDateInToday(date)
+            let count = studiedCount(for: date, in: allLogs, calendar: calendar)
             return DayActivity(
                 dayLabel: dayLabels[offset],
-                studiedCards: logsForDay.count,
-                isToday: isToday
+                studiedCards: count,
+                isToday: calendar.isDateInToday(date)
             )
         }
+    }
+
+    private func mondayOfCurrentWeek(calendar: Calendar) -> Date? {
+        let today = calendar.startOfDay(for: Date())
+        let weekday = calendar.component(.weekday, from: today)
+        let daysFromMonday = (weekday + 5) % 7
+        return calendar.date(byAdding: .day, value: -daysFromMonday, to: today)
+    }
+
+    private func weekdayLabels(from monday: Date, calendar: Calendar) -> [String] {
+        let formatter = DateFormatter()
+        formatter.locale = LanguageManager.shared.locale
+        formatter.dateFormat = "EEE"
+        return (0..<7).map { offset in
+            guard let date = calendar.date(byAdding: .day, value: offset, to: monday) else { return "" }
+            return formatter.string(from: date)
+        }
+    }
+
+    private func studiedCount(for date: Date, in logs: [StudyLog], calendar: Calendar) -> Int {
+        guard let nextDate = calendar.date(byAdding: .day, value: 1, to: date) else { return 0 }
+        return logs.filter { $0.studiedAt >= date && $0.studiedAt < nextDate }.count
     }
 }

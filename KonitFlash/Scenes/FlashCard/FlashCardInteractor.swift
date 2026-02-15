@@ -1,5 +1,8 @@
 import Foundation
+import os
 import SwiftData
+
+private let logger = Logger(subsystem: "geunil.KonitFlash", category: "FlashCardInteractor")
 
 struct SessionInfo {
     let deckName: String
@@ -130,7 +133,7 @@ final class FlashCardInteractor {
         do {
             try modelContext.save()
         } catch {
-            print("[KonitFlash] Failed to save answer: \(error)")
+            logger.error("Failed to save answer: \(error)")
         }
 
         // Re-queue intraday cards (interval < 1 day)

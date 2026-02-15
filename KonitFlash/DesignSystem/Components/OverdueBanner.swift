@@ -2,8 +2,10 @@ import SwiftUI
 
 struct OverdueBanner: View {
     let count: Int
-    var isRegular: Bool = false
     var onTap: (() -> Void)?
+    @Environment(\.horizontalSizeClass) private var sizeClass
+
+    private var isRegular: Bool { sizeClass == .regular }
 
     var body: some View {
         Button {
@@ -47,7 +49,8 @@ struct OverdueBanner: View {
 }
 
 #Preview("Mac") {
-    OverdueBanner(count: 45, isRegular: true)
+    OverdueBanner(count: 45)
+        .environment(\.horizontalSizeClass, .regular)
         .padding()
         .frame(width: 1000)
         .background(Color.appBackground)

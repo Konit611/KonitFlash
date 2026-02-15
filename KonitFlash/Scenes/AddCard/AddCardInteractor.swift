@@ -1,5 +1,8 @@
 import Foundation
+import os
 import SwiftData
+
+private let logger = Logger(subsystem: "geunil.KonitFlash", category: "AddCardInteractor")
 
 struct AddCardInput {
     let deckID: UUID
@@ -50,7 +53,7 @@ final class AddCardInteractor {
         do {
             try modelContext.save()
         } catch {
-            print("[KonitFlash] Failed to save card: \(error)")
+            logger.error("Failed to save card: \(error)")
         }
     }
 
@@ -63,7 +66,7 @@ final class AddCardInteractor {
         do {
             try modelContext.save()
         } catch {
-            print("[KonitFlash] Failed to update card: \(error)")
+            logger.error("Failed to update card: \(error)")
         }
     }
 }

@@ -52,7 +52,7 @@ struct AddCardView: View {
 
     private var formCard: some View {
         VStack(alignment: .leading, spacing: 0) {
-            FormFieldView(
+            FormTextField(
                 label: String(localized: "Front", bundle: LanguageManager.shared.bundle),
                 text: Binding(
                     get: { presenter.viewState.front },
@@ -67,14 +67,13 @@ struct AddCardView: View {
                 .frame(height: 1)
                 .padding(.bottom, isRegular ? 20 : 16)
 
-            FormFieldView(
+            FormTextEditor(
                 label: String(localized: "Back", bundle: LanguageManager.shared.bundle),
                 text: Binding(
                     get: { presenter.viewState.back },
                     set: { presenter.updateBack($0) }
                 ),
-                placeholder: String(localized: "Enter back text", bundle: LanguageManager.shared.bundle),
-                isMultiline: true
+                placeholder: String(localized: "Enter back text", bundle: LanguageManager.shared.bundle)
             )
         }
         .padding(isRegular ? 28 : 20)
@@ -85,7 +84,11 @@ struct AddCardView: View {
 
     private var addButton: some View {
         Button {
-            presenter.saveCard()
+            if presenter.viewState.isEditMode {
+                presenter.updateCard()
+            } else {
+                presenter.createCard()
+            }
             dismiss()
         } label: {
             Text(presenter.viewState.buttonTitle)

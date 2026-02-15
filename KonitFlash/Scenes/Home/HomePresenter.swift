@@ -40,7 +40,6 @@ final class HomePresenter: ObservableObject {
 
         viewState = HomeViewState(
             overdueCount: data.stats.overdueCount,
-            showOverdueBanner: data.stats.overdueCount > 0,
             firstOverdueDeckID: data.firstOverdueDeckID,
             stats: mapStats(data.stats),
             weeklyData: mapWeeklyData(data.weeklyActivities),
@@ -105,15 +104,9 @@ final class HomePresenter: ObservableObject {
                 totalCards: "\(deck.totalCards)",
                 dueCards: deck.dueCards,
                 estimatedMinutes: deck.estimatedMinutes,
-                progressColor: colorForTag(deck.colorTagEnum)
+                progressColor: Color.colorForTag(deck.colorTagEnum)
             )
         }
     }
 
-    private func colorForTag(_ tag: ColorTag) -> Color {
-        switch tag {
-        case .pink: return .streakPink
-        case .green: return .learnedGreen
-        }
-    }
 }

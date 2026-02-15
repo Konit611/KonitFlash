@@ -2,23 +2,6 @@ import Combine
 import SwiftUI
 import SwiftData
 
-enum CardFilter: String, CaseIterable {
-    case all = "All"
-    case due = "Due"
-    case newCards = "New"
-    case learned = "Learned"
-
-    var localizedLabel: String {
-        let bundle = LanguageManager.shared.bundle
-        switch self {
-        case .all: return String(localized: "All", bundle: bundle)
-        case .due: return String(localized: "Due", bundle: bundle)
-        case .newCards: return String(localized: "New", bundle: bundle)
-        case .learned: return String(localized: "Learned", bundle: bundle)
-        }
-    }
-}
-
 final class DeckDetailPresenter: ObservableObject {
     @Published var viewState = DeckDetailViewState()
     @Published var searchText: String = ""
@@ -66,7 +49,7 @@ final class DeckDetailPresenter: ObservableObject {
             totalCards: "\(data.deck.totalCards)",
             progress: data.deck.progress,
             progressPercent: "\(Int(data.deck.progress * 100))%",
-            progressColor: colorForTag(data.deck.colorTagEnum),
+            progressColor: Color.colorForTag(data.deck.colorTagEnum),
             newCount: "\(data.newCount)",
             learningCount: "\(data.learningCount)",
             reviewedCount: "\(data.reviewedCount)",
@@ -130,10 +113,4 @@ final class DeckDetailPresenter: ObservableObject {
         }
     }
 
-    private func colorForTag(_ tag: ColorTag) -> Color {
-        switch tag {
-        case .pink: return .streakPink
-        case .green: return .learnedGreen
-        }
-    }
 }

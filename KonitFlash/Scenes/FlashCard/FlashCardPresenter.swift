@@ -136,33 +136,33 @@ final class FlashCardPresenter: ObservableObject {
             ? Double(result.correctCount) / Double(result.totalCards) * 100
             : 0
 
-        let totalSeconds = Int(result.elapsedSeconds)
-        let hours = totalSeconds / 3600
-        let minutes = (totalSeconds % 3600) / 60
-        let seconds = totalSeconds % 60
-        let timeText: String
-        if hours > 0 {
-            timeText = "\(hours):\(String(format: "%02d", minutes)):\(String(format: "%02d", seconds))"
-        } else {
-            timeText = "\(minutes):\(String(format: "%02d", seconds))"
-        }
-
-        let bundle = LanguageManager.shared.bundle
-        let message: String
-        if accuracy >= 80 {
-            message = String(localized: "Excellent work! Keep it up!", bundle: bundle)
-        } else if accuracy >= 60 {
-            message = String(localized: "Good effort! Practice makes perfect.", bundle: bundle)
-        } else {
-            message = String(localized: "Keep studying! You'll get there.", bundle: bundle)
-        }
-
         viewState.phase = .result
         viewState.accuracyPercent = accuracy
         viewState.totalCards = result.totalCards
-        viewState.elapsedTime = timeText
+        viewState.elapsedTime = formatElapsedTime(result.elapsedSeconds)
         viewState.goodEasyCount = result.goodCount + result.easyCount
         viewState.againHardCount = result.againCount + result.hardCount
-        viewState.resultMessage = message
+        viewState.resultMessage = resultMessage(for: accuracy)
+    }
+
+    private func formatElapsedTime(_ seconds: Double) -> String {
+        let totalSeconds = Int(seconds)
+        let hours = totalSeconds / 3600
+        let minutes = (totalSeconds % 3600) / 60
+        let secs = totalSeconds % 60
+        if hours > 0 {
+            return "\(hours):\(String(format: "%02d", minutes)):\(String(format: "%02d", secs))"
+        }
+        return "\(minutes):\(String(format: "%02d", secs))"
+    }
+
+    private func resultMessage(for accuracy: Double) -> String {
+        let bundle = LanguageManager.shared.bundle
+        if accuracy >= 80 {
+            return String(localized: "Excellent work! Keep it up!", bundle: bundle)
+        } else if accuracy >= 60 {
+            return String(localized: "Good effort! Practice makes perfect.", bundle: bundle)
+        }
+        return String(localized: "Keep studying! You'll get there.", bundle: bundle)
     }
 }

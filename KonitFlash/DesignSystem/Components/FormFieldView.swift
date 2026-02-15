@@ -1,10 +1,9 @@
 import SwiftUI
 
-struct FormFieldView: View {
+struct FormTextField: View {
     let label: String
     @Binding var text: String
     var placeholder: String = ""
-    var isMultiline: Bool = false
     @Environment(\.horizontalSizeClass) private var sizeClass
 
     private var isRegular: Bool { sizeClass == .regular }
@@ -15,41 +14,56 @@ struct FormFieldView: View {
                 .font(.system(size: isRegular ? 20 : 16, weight: .semibold))
                 .foregroundStyle(Color(hex: 0x555555))
 
-            if isMultiline {
-                ZStack(alignment: .topLeading) {
-                    if text.isEmpty {
-                        Text(placeholder)
-                            .font(.system(size: isRegular ? 20 : 16))
-                            .foregroundStyle(Color(hex: 0xBBBBBB))
-                            .padding(.horizontal, isRegular ? 16 : 12)
-                            .padding(.vertical, isRegular ? 14 : 10)
-                    }
-                    TextEditor(text: $text)
-                        .font(.system(size: isRegular ? 20 : 16))
-                        .foregroundStyle(.black)
-                        .scrollContentBackground(.hidden)
-                        .padding(.horizontal, isRegular ? 11 : 7)
-                        .padding(.vertical, isRegular ? 6 : 2)
-                }
-                .frame(minHeight: isRegular ? 140 : 100)
+            TextField(placeholder, text: $text)
+                .font(.system(size: isRegular ? 20 : 16))
+                .foregroundStyle(.black)
+                .padding(.horizontal, isRegular ? 16 : 12)
+                .padding(.vertical, isRegular ? 14 : 10)
                 .background(Color(hex: 0xF5F5F5), in: RoundedRectangle(cornerRadius: isRegular ? 12 : 10))
-            } else {
-                TextField(placeholder, text: $text)
+        }
+    }
+}
+
+struct FormTextEditor: View {
+    let label: String
+    @Binding var text: String
+    var placeholder: String = ""
+    @Environment(\.horizontalSizeClass) private var sizeClass
+
+    private var isRegular: Bool { sizeClass == .regular }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: isRegular ? 10 : 8) {
+            Text(label)
+                .font(.system(size: isRegular ? 20 : 16, weight: .semibold))
+                .foregroundStyle(Color(hex: 0x555555))
+
+            ZStack(alignment: .topLeading) {
+                if text.isEmpty {
+                    Text(placeholder)
+                        .font(.system(size: isRegular ? 20 : 16))
+                        .foregroundStyle(Color(hex: 0xBBBBBB))
+                        .padding(.horizontal, isRegular ? 16 : 12)
+                        .padding(.vertical, isRegular ? 14 : 10)
+                }
+                TextEditor(text: $text)
                     .font(.system(size: isRegular ? 20 : 16))
                     .foregroundStyle(.black)
-                    .padding(.horizontal, isRegular ? 16 : 12)
-                    .padding(.vertical, isRegular ? 14 : 10)
-                    .background(Color(hex: 0xF5F5F5), in: RoundedRectangle(cornerRadius: isRegular ? 12 : 10))
+                    .scrollContentBackground(.hidden)
+                    .padding(.horizontal, isRegular ? 11 : 7)
+                    .padding(.vertical, isRegular ? 6 : 2)
             }
+            .frame(minHeight: isRegular ? 140 : 100)
+            .background(Color(hex: 0xF5F5F5), in: RoundedRectangle(cornerRadius: isRegular ? 12 : 10))
         }
     }
 }
 
 #Preview("iPhone") {
     VStack(spacing: 20) {
-        FormFieldView(label: "Deck Name", text: .constant(""), placeholder: "Enter deck name")
-        FormFieldView(label: "Deck Name", text: .constant("English Vocabulary"), placeholder: "Enter deck name")
-        FormFieldView(label: "Description", text: .constant(""), placeholder: "Enter description", isMultiline: true)
+        FormTextField(label: "Deck Name", text: .constant(""), placeholder: "Enter deck name")
+        FormTextField(label: "Deck Name", text: .constant("English Vocabulary"), placeholder: "Enter deck name")
+        FormTextEditor(label: "Description", text: .constant(""), placeholder: "Enter description")
     }
     .padding()
     .background(.white, in: RoundedRectangle(cornerRadius: 18))
@@ -59,8 +73,8 @@ struct FormFieldView: View {
 
 #Preview("Mac") {
     VStack(spacing: 20) {
-        FormFieldView(label: "Deck Name", text: .constant(""), placeholder: "Enter deck name")
-        FormFieldView(label: "Description", text: .constant(""), placeholder: "Enter description", isMultiline: true)
+        FormTextField(label: "Deck Name", text: .constant(""), placeholder: "Enter deck name")
+        FormTextEditor(label: "Description", text: .constant(""), placeholder: "Enter description")
     }
     .padding()
     .background(.white, in: RoundedRectangle(cornerRadius: 18))

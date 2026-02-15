@@ -2,7 +2,7 @@ import SwiftUI
 
 struct HomeViewState {
     var overdueCount: Int = 0
-    var showOverdueBanner: Bool = false
+    var showOverdueBanner: Bool { overdueCount > 0 }
     var firstOverdueDeckID: UUID?
     var stats: StatsViewData = StatsViewData()
     var weeklyData: [DayBarData] = []
@@ -18,7 +18,7 @@ struct StatsViewData {
 }
 
 struct DayBarData: Identifiable {
-    let id = UUID()
+    var id: String { dayLabel }
     let dayLabel: String
     let studiedCards: Int
     let isToday: Bool

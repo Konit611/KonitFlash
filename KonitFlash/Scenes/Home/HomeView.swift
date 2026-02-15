@@ -19,7 +19,6 @@ struct HomeView: View {
                 if presenter.viewState.showOverdueBanner {
                     OverdueBanner(
                         count: presenter.viewState.overdueCount,
-                        isRegular: isRegular,
                         onTap: {
                             path.append(NavigationRoute.overdueList)
                         }

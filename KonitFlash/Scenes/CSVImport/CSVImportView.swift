@@ -134,8 +134,8 @@ struct CSVImportView: View {
                     .foregroundStyle(.black.opacity(0.5))
                     .padding(.bottom, 10)
 
-                ForEach(Array(presenter.viewState.previewCards.enumerated()), id: \.offset) { index, card in
-                    if index > 0 {
+                ForEach(presenter.viewState.previewCards) { card in
+                    if card.id > 0 {
                         Divider()
                     }
                     HStack(alignment: .top) {

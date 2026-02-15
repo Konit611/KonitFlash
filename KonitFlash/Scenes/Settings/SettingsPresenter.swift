@@ -4,14 +4,19 @@ import Foundation
 final class SettingsPresenter: ObservableObject {
     @Published var viewState = SettingsViewState()
 
-    private let interactor: SettingsInteractor
+    private var interactor: SettingsInteractor?
 
-    init(interactor: SettingsInteractor = SettingsInteractor()) {
-        self.interactor = interactor
+    func configure() {
+        if interactor != nil {
+            loadData()
+            return
+        }
+        self.interactor = SettingsInteractor()
         loadData()
     }
 
     func loadData() {
+        guard let interactor else { return }
         let data = interactor.fetchSettings()
         let limit = data.sessionCardLimit
         let display = limit > 0
@@ -33,13 +38,13 @@ final class SettingsPresenter: ObservableObject {
     }
 
     func selectLanguage(_ code: String) {
-        interactor.setLanguage(code)
+        interactor?.setLanguage(code)
         loadData()
     }
 
     func selectSessionCardLimit(_ limit: Int) {
         let clamped = max(limit, 0)
-        interactor.setSessionCardLimit(clamped)
+        interactor?.setSessionCardLimit(clamped)
         loadData()
     }
 }

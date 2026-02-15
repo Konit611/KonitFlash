@@ -39,7 +39,9 @@ final class CSVImportPresenter: ObservableObject {
         duplicates = interactor.findDuplicates(in: deckID, fronts: result.cards.map { $0.front })
 
         viewState.phase = .preview
-        viewState.previewCards = Array(result.cards.prefix(5))
+        viewState.previewCards = result.cards.prefix(5).enumerated().map { index, card in
+            PreviewCardData(id: index, front: card.front, back: card.back)
+        }
         viewState.totalCount = result.cards.count
         viewState.skippedCount = result.skippedRows
         viewState.duplicateCount = duplicates.count

@@ -46,19 +46,23 @@ final class AddCardPresenter: ObservableObject {
         updateSaveEnabled()
     }
 
-    func saveCard() {
-        guard let interactor, let deckID else { return }
-        let input = AddCardInput(
+    func createCard() {
+        guard let interactor else { return }
+        interactor.saveCard(buildInput())
+    }
+
+    func updateCard() {
+        guard let interactor, let editingCardID else { return }
+        interactor.updateCard(cardID: editingCardID, input: buildInput())
+    }
+
+    private func buildInput() -> AddCardInput {
+        guard let deckID else { return AddCardInput(deckID: UUID(), front: "", back: "") }
+        return AddCardInput(
             deckID: deckID,
             front: viewState.front.trimmingCharacters(in: .whitespaces),
             back: viewState.back.trimmingCharacters(in: .whitespaces)
         )
-
-        if let editingCardID {
-            interactor.updateCard(cardID: editingCardID, input: input)
-        } else {
-            interactor.saveCard(input)
-        }
     }
 
     private func updateSaveEnabled() {

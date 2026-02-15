@@ -12,6 +12,13 @@ extension Color {
     static let weeklyCompleted = Color(hex: 0x3B3B3B)
     static let deckBadge = Color(hex: 0xFFDDF2)
 
+    static func colorForTag(_ tag: ColorTag) -> Color {
+        switch tag {
+        case .pink: return .streakPink
+        case .green: return .learnedGreen
+        }
+    }
+
     init(hex: UInt, alpha: Double = 1.0) {
         self.init(
             .sRGB,
