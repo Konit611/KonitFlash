@@ -19,9 +19,10 @@ final class SettingsPresenter: ObservableObject {
         guard let interactor else { return }
         let data = interactor.fetchSettings()
         let limit = data.sessionCardLimit
-        let display = limit > 0
-            ? "\(limit)"
-            : String(localized: "Unlimited", bundle: LanguageManager.shared.bundle)
+        let isCustom = !data.presetLimitValues.contains(limit)
+
+        let bundle = LanguageManager.shared.bundle
+        let unlimitedLabel = String(localized: "Unlimited", bundle: bundle)
 
         viewState = SettingsViewState(
             languages: data.availableLanguages.map { lang in
@@ -33,7 +34,17 @@ final class SettingsPresenter: ObservableObject {
             },
             selectedCode: data.selectedLanguageCode,
             sessionCardLimit: limit,
-            sessionCardLimitDisplay: display
+            presetLimits: data.presetLimitValues.map { value in
+                PresetLimit(
+                    id: value,
+                    label: value == 0 ? unlimitedLabel : "\(value)",
+                    isSelected: !isCustom && value == limit
+                )
+            },
+            isCustomSelected: isCustom,
+            customLimitText: isCustom ? "\(limit)" : "",
+            appVersion: data.appVersion,
+            buildNumber: data.buildNumber
         )
     }
 
@@ -42,9 +53,22 @@ final class SettingsPresenter: ObservableObject {
         loadData()
     }
 
-    func selectSessionCardLimit(_ limit: Int) {
-        let clamped = max(limit, 0)
+    func selectPresetLimit(_ value: Int) {
+        let clamped = max(value, 0)
         interactor?.setSessionCardLimit(clamped)
+        loadData()
+    }
+
+    func selectCustom() {
+        viewState.isCustomSelected = true
+        for i in viewState.presetLimits.indices {
+            viewState.presetLimits[i].isSelected = false
+        }
+    }
+
+    func setCustomLimit(_ text: String) {
+        guard let value = Int(text), value > 0 else { return }
+        interactor?.setSessionCardLimit(value)
         loadData()
     }
 }

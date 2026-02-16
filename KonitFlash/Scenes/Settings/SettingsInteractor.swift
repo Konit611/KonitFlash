@@ -4,10 +4,14 @@ struct SettingsData {
     let selectedLanguageCode: String
     let availableLanguages: [(code: String, name: String)]
     let sessionCardLimit: Int
+    let presetLimitValues: [Int]
+    let appVersion: String
+    let buildNumber: String
 }
 
 final class SettingsInteractor {
     static let sessionCardLimitKey = "sessionCardLimit"
+    static let presetValues = [10, 15, 20, 30, 50, 0] // 0 = unlimited
 
     func fetchSettings() -> SettingsData {
         let selected = LanguageManager.shared.selectedLanguage
@@ -22,10 +26,16 @@ final class SettingsInteractor {
 
         let limit = Self.currentSessionCardLimit()
 
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
+        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
+
         return SettingsData(
             selectedLanguageCode: selected,
             availableLanguages: languages,
-            sessionCardLimit: limit
+            sessionCardLimit: limit,
+            presetLimitValues: Self.presetValues,
+            appVersion: version,
+            buildNumber: build
         )
     }
 
