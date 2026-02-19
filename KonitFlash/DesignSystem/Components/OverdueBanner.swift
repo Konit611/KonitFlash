@@ -33,6 +33,8 @@ struct OverdueBanner: View {
                 Image(systemName: "chevron.right")
                     .font(.system(size: isRegular ? 18 : 14, weight: .semibold))
                     .foregroundStyle(Color.overdueText)
+                    .padding(isRegular ? 10 : 8)
+                    .background(Color.white, in: Circle())
             }
             .padding(.horizontal, isRegular ? 24 : 16)
             .padding(.vertical, isRegular ? 16 : 20)

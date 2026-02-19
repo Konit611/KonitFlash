@@ -10,6 +10,7 @@
 		C614183A2F3F4B0B004D0574 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C61418102F3F492B004D0574 /* WidgetKit.framework */; };
 		C614183B2F3F4B0B004D0574 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C61418122F3F492B004D0574 /* SwiftUI.framework */; };
 		C61418582F405648004D0574 /* LaTeXSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = C61418572F405648004D0574 /* LaTeXSwiftUI */; };
+		C61419102F472B10004D0574 /* KonitFlashWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C61418392F3F4B0B004D0574 /* KonitFlashWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,6 +44,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				C61419102F472B10004D0574 /* KonitFlashWidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -415,6 +417,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				"CODE_SIGN_ENTITLEMENTS[sdk=*]" = KonitFlashWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = H24UL983G7;
@@ -445,6 +448,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				"CODE_SIGN_ENTITLEMENTS[sdk=*]" = KonitFlashWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = H24UL983G7;
