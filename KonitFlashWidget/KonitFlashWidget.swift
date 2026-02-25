@@ -20,6 +20,20 @@ struct WidgetData: Codable {
     let languageCode: String
 }
 
+struct WidgetDeckSnapshot: Codable {
+    let id: UUID
+    let name: String
+    let colorTag: String
+    let totalCards: Int
+    let cardDueDates: [Date]
+}
+
+struct WidgetRawData: Codable {
+    let decks: [WidgetDeckSnapshot]
+    let streakDays: Int
+    let languageCode: String
+}
+
 // MARK: - Timeline Entry
 
 struct StudyEntry: TimelineEntry {
@@ -32,6 +46,7 @@ struct StudyEntry: TimelineEntry {
 struct StudyTimelineProvider: TimelineProvider {
     private static let suiteName = "group.geunil.KonitFlash"
     private static let dataKey = "widgetData"
+    private static let rawDataKey = "widgetRawData"
 
     func placeholder(in context: Context) -> StudyEntry {
         StudyEntry(
@@ -56,11 +71,39 @@ struct StudyTimelineProvider: TimelineProvider {
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<StudyEntry>) -> Void) {
-        let entry = StudyEntry(date: Date(), data: readWidgetData())
-        let nextUpdate = Calendar.current.date(byAdding: .minute, value: 30, to: Date()) ?? Date()
-        let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
-        completion(timeline)
+        guard let rawData = readRawData() else {
+            let entry = StudyEntry(date: Date(), data: readWidgetData())
+            let nextUpdate = Calendar.current.date(byAdding: .hour, value: 1, to: Date()) ?? Date()
+            completion(Timeline(entries: [entry], policy: .after(nextUpdate)))
+            return
+        }
+
+        let now = Date()
+        let horizon = Calendar.current.date(byAdding: .hour, value: 24, to: now) ?? now
+
+        // Collect unique future due times within the 24-hour window
+        var futureDueTimes: Set<Date> = []
+        for deck in rawData.decks {
+            for dueDate in deck.cardDueDates where dueDate > now && dueDate <= horizon {
+                futureDueTimes.insert(dueDate)
+            }
+        }
+
+        // Build entry time points: now + each future due time, sorted
+        var entryDates = [now] + futureDueTimes.sorted()
+        // Cap at 24 entries to respect iOS widget memory limits
+        if entryDates.count > 24 {
+            entryDates = Array(entryDates.prefix(24))
+        }
+
+        let entries = entryDates.map { entryDate in
+            StudyEntry(date: entryDate, data: computeWidgetData(from: rawData, at: entryDate))
+        }
+
+        completion(Timeline(entries: entries, policy: .after(horizon)))
     }
+
+    // MARK: - Private
 
     private func readWidgetData() -> WidgetData? {
         guard let defaults = UserDefaults(suiteName: Self.suiteName),
@@ -68,6 +111,41 @@ struct StudyTimelineProvider: TimelineProvider {
             return nil
         }
         return try? JSONDecoder().decode(WidgetData.self, from: jsonData)
+    }
+
+    private func readRawData() -> WidgetRawData? {
+        guard let defaults = UserDefaults(suiteName: Self.suiteName),
+              let jsonData = defaults.data(forKey: Self.rawDataKey) else {
+            return nil
+        }
+        return try? JSONDecoder().decode(WidgetRawData.self, from: jsonData)
+    }
+
+    private func computeWidgetData(from rawData: WidgetRawData, at date: Date) -> WidgetData {
+        let deckInfos = rawData.decks.map { snapshot -> WidgetDeckInfo in
+            let dueCount = snapshot.cardDueDates.filter { $0 <= date }.count
+            return WidgetDeckInfo(
+                id: snapshot.id,
+                name: snapshot.name,
+                colorTag: snapshot.colorTag,
+                dueCards: dueCount,
+                totalCards: snapshot.totalCards
+            )
+        }
+        .sorted { $0.dueCards > $1.dueCards }
+
+        let totalDue = deckInfos.reduce(0) { $0 + $1.dueCards }
+        let topDecks = Array(deckInfos.prefix(3))
+        let mostUrgentDeckID = deckInfos.first(where: { $0.dueCards > 0 })?.id
+
+        return WidgetData(
+            dueCardCount: totalDue,
+            streakDays: rawData.streakDays,
+            topDecks: topDecks,
+            mostUrgentDeckID: mostUrgentDeckID,
+            updatedAt: date,
+            languageCode: rawData.languageCode
+        )
     }
 }
 

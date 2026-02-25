@@ -13,6 +13,20 @@ struct WidgetDeckInfo: Codable, Equatable {
     let totalCards: Int
 }
 
+struct WidgetDeckSnapshot: Codable {
+    let id: UUID
+    let name: String
+    let colorTag: String
+    let totalCards: Int
+    let cardDueDates: [Date]
+}
+
+struct WidgetRawData: Codable {
+    let decks: [WidgetDeckSnapshot]
+    let streakDays: Int
+    let languageCode: String
+}
+
 struct WidgetData: Codable, Equatable {
     let dueCardCount: Int
     let streakDays: Int
@@ -33,6 +47,7 @@ struct WidgetData: Codable, Equatable {
 enum WidgetDataService {
     static let suiteName = "group.geunil.KonitFlash"
     static let dataKey = "widgetData"
+    static let rawDataKey = "widgetRawData"
 
     static func writeWidgetData(from modelContext: ModelContext) {
         let decks = fetchDecks(from: modelContext)
@@ -85,6 +100,30 @@ enum WidgetDataService {
         } catch {
             logger.error("Failed to encode widget data: \(error)")
             return
+        }
+
+        let snapshots = decks.map { deck -> WidgetDeckSnapshot in
+            let cards = deck.cards ?? []
+            return WidgetDeckSnapshot(
+                id: deck.id,
+                name: deck.name,
+                colorTag: deck.colorTag,
+                totalCards: cards.count,
+                cardDueDates: cards.map { $0.dueDate }
+            )
+        }
+
+        let rawData = WidgetRawData(
+            decks: snapshots,
+            streakDays: streakDays,
+            languageCode: languageCode
+        )
+
+        do {
+            let encodedRaw = try JSONEncoder().encode(rawData)
+            defaults.set(encodedRaw, forKey: rawDataKey)
+        } catch {
+            logger.error("Failed to encode widget raw data: \(error)")
         }
 
         WidgetCenter.shared.reloadAllTimelines()
