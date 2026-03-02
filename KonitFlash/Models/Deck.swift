@@ -41,11 +41,8 @@ enum ColorTag: String, Codable, CaseIterable {
     }
 
     init(name: String = "", deckDescription: String = "", colorTag: ColorTag = .pink) {
-        self.id = UUID()
         self.name = name
         self.deckDescription = deckDescription
         self.colorTag = colorTag.rawValue
-        self.createdAt = Date()
-        self.updatedAt = Date()
     }
 }

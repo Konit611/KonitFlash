@@ -10,6 +10,7 @@ struct SRSResult {
 
 enum SRSEngine {
     static let minimumEF: Double = 1.3
+    static let maximumEF: Double = 3.0
     static let maximumInterval: Double = 365
 
     static func compute(
@@ -59,7 +60,7 @@ enum SRSEngine {
             }
 
         case .easy:
-            newEF = currentEF + 0.15
+            newEF = min(maximumEF, currentEF + 0.15)
             newRepetitions = currentRepetitions + 1
 
             if currentRepetitions == 0 {

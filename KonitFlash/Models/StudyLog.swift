@@ -9,10 +9,8 @@ import SwiftData
     var elapsedSeconds: Double = 0
 
     init(card: Card? = nil, grade: Int = 0, elapsedSeconds: Double = 0) {
-        self.id = UUID()
         self.card = card
-        self.grade = grade
-        self.studiedAt = Date()
+        self.grade = min(max(0, grade), 3)
         self.elapsedSeconds = elapsedSeconds
     }
 

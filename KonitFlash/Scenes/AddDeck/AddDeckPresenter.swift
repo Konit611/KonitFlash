@@ -35,14 +35,16 @@ final class AddDeckPresenter: ObservableObject {
         viewState.selectedColorTag = tag
     }
 
-    func createDeck() {
-        guard let interactor else { return }
-        interactor.saveDeck(buildInput())
+    @discardableResult
+    func createDeck() -> Bool {
+        guard let interactor else { return false }
+        return interactor.saveDeck(buildInput())
     }
 
-    func updateDeck() {
-        guard let interactor, let editingDeckID else { return }
-        interactor.updateDeck(deckID: editingDeckID, input: buildInput())
+    @discardableResult
+    func updateDeck() -> Bool {
+        guard let interactor, let editingDeckID else { return false }
+        return interactor.updateDeck(deckID: editingDeckID, input: buildInput())
     }
 
     private func buildInput() -> AddDeckInput {

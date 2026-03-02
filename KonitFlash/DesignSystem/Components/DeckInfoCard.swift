@@ -85,7 +85,7 @@ struct DeckInfoCard: View {
                                     .frame(height: isRegular ? 15 : 7)
                                 RoundedRectangle(cornerRadius: 30)
                                     .fill(progressColor)
-                                    .frame(width: geo.size.width * progress, height: isRegular ? 13 : 5)
+                                    .frame(width: geo.size.width * min(max(0, progress), 1), height: isRegular ? 13 : 5)
                                     .padding(.leading, 0.5)
                             }
                         }

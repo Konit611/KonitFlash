@@ -43,30 +43,36 @@ final class AddCardInteractor {
         return EditCardData(deckName: deck.name, front: card.front, back: card.back)
     }
 
-    func saveCard(_ input: AddCardInput) {
+    @discardableResult
+    func saveCard(_ input: AddCardInput) -> Bool {
         let targetDeckID = input.deckID
         let deckDescriptor = FetchDescriptor<Deck>(predicate: #Predicate { $0.id == targetDeckID })
-        guard let deck = try? modelContext.fetch(deckDescriptor).first else { return }
+        guard let deck = try? modelContext.fetch(deckDescriptor).first else { return false }
 
         let card = Card(front: input.front, back: input.back, deck: deck)
         modelContext.insert(card)
         do {
             try modelContext.save()
+            return true
         } catch {
             logger.error("Failed to save card: \(error)")
+            return false
         }
     }
 
-    func updateCard(cardID: UUID, input: AddCardInput) {
+    @discardableResult
+    func updateCard(cardID: UUID, input: AddCardInput) -> Bool {
         let descriptor = FetchDescriptor<Card>(predicate: #Predicate { $0.id == cardID })
-        guard let card = try? modelContext.fetch(descriptor).first else { return }
+        guard let card = try? modelContext.fetch(descriptor).first else { return false }
         card.front = input.front
         card.back = input.back
         card.updatedAt = Date()
         do {
             try modelContext.save()
+            return true
         } catch {
             logger.error("Failed to update card: \(error)")
+            return false
         }
     }
 }

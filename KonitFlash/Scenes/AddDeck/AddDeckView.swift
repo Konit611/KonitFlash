@@ -79,12 +79,13 @@ struct AddDeckView: View {
 
     private var createButton: some View {
         Button {
+            let success: Bool
             if presenter.viewState.isEditMode {
-                presenter.updateDeck()
+                success = presenter.updateDeck()
             } else {
-                presenter.createDeck()
+                success = presenter.createDeck()
             }
-            dismiss()
+            if success { dismiss() }
         } label: {
             Text(presenter.viewState.buttonTitle)
                 .font(.system(size: isRegular ? 20 : 17, weight: .bold))

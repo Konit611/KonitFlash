@@ -55,7 +55,18 @@ final class FlashCardPresenter: ObservableObject {
     }
 
     func restartSession() {
-        loadData()
+        guard let interactor else { return }
+        stopTimer()
+
+        let session = interactor.restartWithPreviousCards()
+        viewState.deckName = session.deckName
+        viewState.totalCount = session.initialCardCount
+
+        if session.initialCardCount == 0 {
+            viewState.phase = .empty
+        } else {
+            advanceToNextCard()
+        }
     }
 
     deinit {

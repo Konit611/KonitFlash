@@ -33,27 +33,33 @@ final class AddDeckInteractor {
         )
     }
 
-    func saveDeck(_ input: AddDeckInput) {
+    @discardableResult
+    func saveDeck(_ input: AddDeckInput) -> Bool {
         let deck = Deck(name: input.name, deckDescription: input.description, colorTag: input.colorTag)
         modelContext.insert(deck)
         do {
             try modelContext.save()
+            return true
         } catch {
             logger.error("Failed to save deck: \(error)")
+            return false
         }
     }
 
-    func updateDeck(deckID: UUID, input: AddDeckInput) {
+    @discardableResult
+    func updateDeck(deckID: UUID, input: AddDeckInput) -> Bool {
         let descriptor = FetchDescriptor<Deck>(predicate: #Predicate { $0.id == deckID })
-        guard let deck = try? modelContext.fetch(descriptor).first else { return }
+        guard let deck = try? modelContext.fetch(descriptor).first else { return false }
         deck.name = input.name
         deck.deckDescription = input.description
         deck.colorTagEnum = input.colorTag
         deck.updatedAt = Date()
         do {
             try modelContext.save()
+            return true
         } catch {
             logger.error("Failed to update deck: \(error)")
+            return false
         }
     }
 }

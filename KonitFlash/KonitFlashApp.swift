@@ -8,6 +8,8 @@ struct KonitFlashApp: App {
 
     let container: ModelContainer
 
+    @Environment(\.scenePhase) private var scenePhase
+
     init() {
         let schema = Schema([Deck.self, Card.self, StudyLog.self])
         do {
@@ -18,7 +20,12 @@ struct KonitFlashApp: App {
                 let localConfig = ModelConfiguration(schema: schema, cloudKitDatabase: .none)
                 container = try ModelContainer(for: schema, configurations: [localConfig])
             } catch {
-                fatalError("Failed to create ModelContainer: \(error)")
+                do {
+                    let inMemoryConfig = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+                    container = try ModelContainer(for: schema, configurations: [inMemoryConfig])
+                } catch {
+                    fatalError("Failed to create ModelContainer: \(error)")
+                }
             }
         }
     }
@@ -29,6 +36,11 @@ struct KonitFlashApp: App {
                 .environment(\.locale, languageManager.locale)
                 .onOpenURL { url in
                     handleDeepLink(url)
+                }
+                .onChange(of: scenePhase) { _, newPhase in
+                    if newPhase == .background {
+                        WidgetDataService.writeWidgetData(from: container.mainContext)
+                    }
                 }
         }
         .modelContainer(container)
@@ -44,6 +56,8 @@ struct KonitFlashApp: App {
             guard let deckID = UUID(uuidString: pathComponent) else { return }
             path = NavigationPath()
             path.append(NavigationRoute.flashCard(deckID: deckID))
+        case "home":
+            path = NavigationPath()
         default:
             path = NavigationPath()
         }

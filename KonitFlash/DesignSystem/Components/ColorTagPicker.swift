@@ -18,22 +18,24 @@ struct ColorTagPicker: View {
 
             HStack(spacing: isRegular ? 16 : 12) {
                 ForEach(tagOptions, id: \.0) { tag, color in
-                    Circle()
-                        .fill(color)
-                        .frame(
-                            width: isRegular ? 44 : 36,
-                            height: isRegular ? 44 : 36
-                        )
-                        .overlay {
-                            if selectedTag == tag {
-                                Circle()
-                                    .stroke(.black, lineWidth: 3)
-                                    .padding(2)
+                    Button {
+                        selectedTag = tag
+                    } label: {
+                        Circle()
+                            .fill(color)
+                            .frame(
+                                width: isRegular ? 44 : 36,
+                                height: isRegular ? 44 : 36
+                            )
+                            .overlay {
+                                if selectedTag == tag {
+                                    Circle()
+                                        .stroke(.black, lineWidth: 3)
+                                        .padding(2)
+                                }
                             }
-                        }
-                        .onTapGesture {
-                            selectedTag = tag
-                        }
+                    }
+                    .buttonStyle(.plain)
                 }
             }
         }

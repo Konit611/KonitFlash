@@ -171,6 +171,22 @@ final class FlashCardInteractor {
         )
     }
 
+    func restartWithPreviousCards() -> SessionInfo {
+        let previousCards = answers.map { $0.card }
+        let deckName = previousCards.first?.deck?.name ?? ""
+
+        startDate = Date()
+        lastAnswerTime = startDate
+        answers = []
+        learningQueue = []
+        completedSteps = 0
+
+        reviewQueue = previousCards
+        totalSteps = reviewQueue.count
+
+        return SessionInfo(deckName: deckName, initialCardCount: reviewQueue.count)
+    }
+
     // MARK: - Private
 
     private func gradeToInt(_ grade: AnswerGrade) -> Int {

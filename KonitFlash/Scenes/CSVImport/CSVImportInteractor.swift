@@ -34,7 +34,7 @@ final class CSVImportInteractor {
         let descriptor = FetchDescriptor<Deck>(predicate: #Predicate { $0.id == deckID })
         guard let deck = try? modelContext.fetch(descriptor).first else { return [] }
         let existingFronts = Set((deck.cards ?? []).map { $0.front.lowercased() })
-        return Set(fronts.filter { existingFronts.contains($0.lowercased()) })
+        return Set(fronts.filter { existingFronts.contains($0.lowercased()) }.map { $0.lowercased() })
     }
 
     func importCards(into deckID: UUID, cards: [(front: String, back: String)], skipDuplicates: Set<String>) -> Int {

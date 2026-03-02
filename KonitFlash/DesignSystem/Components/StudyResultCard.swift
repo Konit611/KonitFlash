@@ -36,7 +36,7 @@ struct StudyResultCard: View {
             Circle()
                 .stroke(Color(hex: 0xE8E8E8), lineWidth: isRegular ? 12 : 8)
             Circle()
-                .trim(from: 0, to: accuracyPercent / 100)
+                .trim(from: 0, to: min(max(0, accuracyPercent / 100), 1))
                 .stroke(Color.learnedGreen, style: StrokeStyle(lineWidth: isRegular ? 12 : 8, lineCap: .round))
                 .rotationEffect(.degrees(-90))
             Text("\(Int(accuracyPercent))%")

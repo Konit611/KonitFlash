@@ -20,9 +20,10 @@ final class HomeInteractor {
 
     func fetchHomeData() -> HomeData {
         let decks = fetchDecks()
-        let allLogs = fetchAllLogs()
-        let stats = computeStats(decks: decks, allLogs: allLogs)
-        let weeklyActivities = computeWeeklyActivity(allLogs: allLogs)
+        let recentLogs = fetchRecentLogs()
+        let totalReviewCount = fetchTotalReviewCount()
+        let stats = computeStats(decks: decks, recentLogs: recentLogs, totalReviewCount: totalReviewCount)
+        let weeklyActivities = computeWeeklyActivity(allLogs: recentLogs)
         let firstOverdueDeckID = findFirstOverdueDeckID(decks: decks)
         return HomeData(stats: stats, weeklyActivities: weeklyActivities, decks: decks, firstOverdueDeckID: firstOverdueDeckID)
     }
@@ -45,24 +46,31 @@ final class HomeInteractor {
         return (try? modelContext.fetch(descriptor)) ?? []
     }
 
-    private func fetchAllLogs() -> [StudyLog] {
-        let logDescriptor = FetchDescriptor<StudyLog>()
-        return (try? modelContext.fetch(logDescriptor)) ?? []
+    private func fetchRecentLogs() -> [StudyLog] {
+        let cutoff = Calendar.current.date(byAdding: .day, value: -365, to: Date()) ?? Date()
+        let descriptor = FetchDescriptor<StudyLog>(
+            predicate: #Predicate { $0.studiedAt >= cutoff }
+        )
+        return (try? modelContext.fetch(descriptor)) ?? []
     }
 
-    private func computeStats(decks: [Deck], allLogs: [StudyLog]) -> HomeStats {
+    private func fetchTotalReviewCount() -> Int {
+        let descriptor = FetchDescriptor<StudyLog>()
+        return (try? modelContext.fetchCount(descriptor)) ?? 0
+    }
+
+    private func computeStats(decks: [Deck], recentLogs: [StudyLog], totalReviewCount: Int) -> HomeStats {
         let allCards = decks.flatMap { $0.cards ?? [] }
         let now = Date()
         let overdueCount = allCards.filter { $0.dueDate < now }.count
         let learnedCount = allCards.filter { $0.repetitions > 0 }.count
 
-        let reviewCount = allLogs.count
-        let streakDays = StudyLog.computeStreak(from: allLogs)
+        let streakDays = StudyLog.computeStreak(from: recentLogs)
 
         return HomeStats(
             streakDays: streakDays,
             learnedCount: learnedCount,
-            reviewCount: reviewCount,
+            reviewCount: totalReviewCount,
             overdueCount: overdueCount
         )
     }

@@ -51,7 +51,7 @@ enum WidgetDataService {
 
     static func writeWidgetData(from modelContext: ModelContext) {
         let decks = fetchDecks(from: modelContext)
-        let logs = fetchAllLogs(from: modelContext)
+        let logs = fetchRecentLogs(from: modelContext)
 
         let now = Date()
         let allCards = decks.flatMap { $0.cards ?? [] }
@@ -136,8 +136,11 @@ enum WidgetDataService {
         return (try? modelContext.fetch(descriptor)) ?? []
     }
 
-    private static func fetchAllLogs(from modelContext: ModelContext) -> [StudyLog] {
-        let descriptor = FetchDescriptor<StudyLog>()
+    private static func fetchRecentLogs(from modelContext: ModelContext) -> [StudyLog] {
+        let cutoff = Calendar.current.date(byAdding: .day, value: -365, to: Date()) ?? Date()
+        let descriptor = FetchDescriptor<StudyLog>(
+            predicate: #Predicate { $0.studiedAt >= cutoff }
+        )
         return (try? modelContext.fetch(descriptor)) ?? []
     }
 

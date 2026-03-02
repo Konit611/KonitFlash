@@ -63,7 +63,7 @@ struct DeckCardView: View {
                             .overlay(alignment: .leading) {
                                 Capsule()
                                     .fill(deck.progressColor)
-                                    .frame(width: max(0, geo.size.width * deck.progress), height: isRegular ? 7 : 5)
+                                    .frame(width: geo.size.width * min(max(0, deck.progress), 1), height: isRegular ? 7 : 5)
                             }
                             .clipShape(Capsule())
                     }

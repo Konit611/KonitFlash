@@ -84,12 +84,13 @@ struct AddCardView: View {
 
     private var addButton: some View {
         Button {
+            let success: Bool
             if presenter.viewState.isEditMode {
-                presenter.updateCard()
+                success = presenter.updateCard()
             } else {
-                presenter.createCard()
+                success = presenter.createCard()
             }
-            dismiss()
+            if success { dismiss() }
         } label: {
             Text(presenter.viewState.buttonTitle)
                 .font(.system(size: isRegular ? 20 : 17, weight: .bold))

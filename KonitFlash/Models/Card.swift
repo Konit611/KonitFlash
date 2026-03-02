@@ -17,16 +17,8 @@ import SwiftData
     var updatedAt: Date = Date()
 
     init(front: String = "", back: String = "", deck: Deck? = nil) {
-        self.id = UUID()
         self.front = front
         self.back = back
         self.deck = deck
-        self.dueDate = Date()
-        self.interval = 0
-        self.easeFactor = 2.5
-        self.repetitions = 0
-        self.box = 1
-        self.createdAt = Date()
-        self.updatedAt = Date()
     }
 }
