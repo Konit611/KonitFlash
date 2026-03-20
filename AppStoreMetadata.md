@@ -6,6 +6,8 @@
 ## 부제 (30자 이내)
 - EN: `Smart Flashcards with SM-2`
 - KO: `SM-2 간격 반복 플래시카드`
+- JA: `SM-2間隔反復フラッシュカード`
+- ZH: `SM-2间隔重复闪卡`
 
 ---
 
@@ -59,17 +61,69 @@ KONIT Flash는 SM-2 알고리즘으로 잊기 직전 최적의 시점에 복습�
 
 시험 준비, 어학 학습, 전문 지식 복습 — KONIT Flash로 더 적게 공부하고 더 많이 기억하세요.
 
+### Japanese
+
+科学的に実証された間隔反復で、あらゆることをマスターしましょう。
+
+KONIT Flashは、SM-2アルゴリズムを使って忘れる直前の最適なタイミングで復習をスケジュールします。自分でカードを作成するか、NotebookLMのCSVファイルから直接インポートできます。
+
+主な機能
+
+• 間隔反復（SM-2）：Again、Hard、Good、Easyで評価するだけで、アルゴリズムが自動的に復習スケジュールを調整します。
+
+• NotebookLM CSVインポート：NotebookLMからエクスポートした学習資料を、すぐにフラッシュカードに変換できます。
+
+• iCloud同期：iPhoneで学習し、Macで続きを。すべてのデッキ、カード、進捗がiCloudで自動的に同期されます。
+
+• 3Dカードフリップ：答えを確認するとき、満足感のあるフリップアニメーションを楽しめます。
+
+• 学習統計：ストリーク、毎日のレビュー数、学習進捗をチャートで確認できます。
+
+• Macキーボード対応：Spaceでカードをフリップ、1-4キーで評価 — Macでより速く学習できます。
+
+• 4か国語対応：英語、韓国語、日本語、中国語に対応しています。
+
+試験対策、語学学習、専門知識の復習 — KONIT Flashで、少ない勉強でより多くを記憶しましょう。
+
+### Chinese (Simplified)
+
+用科学验证的间隔重复法，掌握任何知识。
+
+KONIT Flash 使用 SM-2 算法，在你即将遗忘之前的最佳时机安排复习。你可以自己创建卡片，也可以直接从 NotebookLM 的 CSV 文件导入。
+
+核心功能
+
+• 间隔重复（SM-2）：只需将每张卡片评为 Again、Hard、Good 或 Easy，算法会自动调整复习计划。
+
+• NotebookLM CSV 导入：将从 NotebookLM 导出的学习资料即刻转换为闪卡。
+
+• iCloud 同步：在 iPhone 上学习，在 Mac 上继续。所有卡组、卡片和学习进度通过 iCloud 自动同步。
+
+• 3D 翻卡动画：查看答案时，享受流畅的翻转动画效果。
+
+• 学习统计：通过可视化图表追踪连续学习天数、每日复习量和学习进度。
+
+• Mac 键盘支持：用空格键翻卡，用 1-4 键评分——在 Mac 上更快速地学习。
+
+• 支持4种语言：英语、韩语、日语和中文。
+
+无论是备考、学习外语，还是复习专业知识——KONIT Flash 帮你用更少的时间记住更多。
+
 ---
 
 ## 키워드 (100자 이내, 쉼표 구분)
 - EN: `flashcard,spaced repetition,SM-2,study,memorize,anki,notebooklm,csv,review,vocabulary`
 - KO: `플래시카드,간격반복,암기,단어장,학습,복습,시험,어휘,노트북LM,SM2`
+- JA: `フラッシュカード,間隔反復,暗記,単語帳,学習,復習,試験,SM2,CSV,語彙`
+- ZH: `闪卡,间隔重复,记忆,背单词,学习,复习,考试,SM2,CSV,词汇`
 
 ---
 
 ## 프로모션 텍스트 (170자 이내)
 - EN: `Study smarter, not harder. KONIT Flash uses SM-2 spaced repetition to help you remember anything — import from NotebookLM and sync across all your devices with iCloud.`
 - KO: `더 똑똑하게 공부하세요. SM-2 간격 반복으로 기억력을 극대화하고, NotebookLM에서 바로 임포트하고, iCloud로 모든 기기에서 동기화하세요.`
+- JA: `もっと賢く学びましょう。KONIT FlashはSM-2間隔反復で記憶を最大化。NotebookLMからインポートし、iCloudですべてのデバイスで同期できます。`
+- ZH: `更聪明地学习。KONIT Flash 使用 SM-2 间隔重复最大化记忆效果，支持从 NotebookLM 导入，通过 iCloud 在所有设备间同步。`
 
 ---
 
@@ -91,16 +145,16 @@ KONIT Flash는 SM-2 알고리즘으로 잊기 직전 최적의 시점에 복습�
 
 ### 스크린샷 구성 (6~8장)
 
-| # | 화면 | 캡션 (EN) | 캡션 (KO) |
-|---|------|-----------|-----------|
-| 1 | Home (덱 목록 있는 상태) | Master anything with spaced repetition | 간격 반복으로 무엇이든 마스터 |
-| 2 | FlashCard 앞면 | Beautiful 3D flip cards | 아름다운 3D 플립 카드 |
-| 3 | FlashCard 뒷면 + 버튼 | Rate and let SM-2 do the rest | 평가하면 SM-2가 알아서 |
-| 4 | 학습 결과 화면 | Track your progress | 학습 진도를 한눈에 |
-| 5 | DeckDetail | Manage your decks and cards | 덱과 카드를 쉽게 관리 |
-| 6 | CSV Import 미리보기 | Import CSV flashcards in seconds | CSV 플래시카드를 즉시 임포트 |
-| 7 | Home (Mac 레이아웃) | Seamless on iPhone and Mac | iPhone과 Mac에서 끊김 없이 |
-| 8 | Settings (다국어) | Available in 4 languages | 4개 언어 지원 |
+| # | 화면 | EN | KO | JA | ZH |
+|---|------|----|----|----|----|
+| 1 | Home (덱 목록) | Master anything with spaced repetition | 간격 반복으로 무엇이든 마스터 | 間隔反復であらゆることをマスター | 用间隔重复掌握一切 |
+| 2 | FlashCard 앞면 | Beautiful 3D flip cards | 아름다운 3D 플립 카드 | 美しい3Dフリップカード | 精美的3D翻卡动画 |
+| 3 | FlashCard 뒷면 + 버튼 | Rate and let SM-2 do the rest | 평가하면 SM-2가 알아서 | 評価すればSM-2が自動調整 | 评分后SM-2自动安排 |
+| 4 | 학습 결과 화면 | Track your progress | 학습 진도를 한눈에 | 学習の進捗を一目で確認 | 一目了然的学习进度 |
+| 5 | DeckDetail | Manage your decks and cards | 덱과 카드를 쉽게 관리 | デッキとカードを簡単管理 | 轻松管理卡组和卡片 |
+| 6 | CSV Import 미리보기 | Import CSV flashcards in seconds | CSV 플래시카드를 즉시 임포트 | CSVフラッシュカードを即座にインポート | 即刻导入CSV闪卡 |
+| 7 | Home (Mac) | Seamless on iPhone and Mac | iPhone과 Mac에서 끊김 없이 | iPhoneでもMacでもシームレスに | iPhone与Mac无缝衔接 |
+| 8 | Settings (다국어) | Available in 4 languages | 4개 언어 지원 | 4か国語に対応 | 支持4种语言 |
 
 ### 스크린샷 법적 주의사항
 - 스크린샷/캡션에 "NotebookLM" 등 타사 상표명, 로고 사용 금지 (상표권 침해 위험)

@@ -33,6 +33,13 @@ struct KonitFlashApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView(path: $path)
+                .onAppear {
+                    #if DEBUG
+                    if ProcessInfo.processInfo.arguments.contains("-sampleData") {
+                        SampleDataService.populate(into: container.mainContext)
+                    }
+                    #endif
+                }
                 .environment(\.locale, languageManager.locale)
                 .onOpenURL { url in
                     handleDeepLink(url)
